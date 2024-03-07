@@ -1,7 +1,7 @@
 <template>
   <div class="common-layout">
     <el-container>
-      <el-aside width="230px" class="menu">
+      <el-aside width="230px">
         <Menu></Menu>
       </el-aside>
       <el-container>
@@ -11,7 +11,7 @@
         <el-scrollbar class="main">
           <el-main>
             <router-view />
-            <span class="footer">enterprisecrm@2024-01-01</span>
+            <p class="footer">enterprisecrm@2024-01-01</p>
           </el-main>
         </el-scrollbar>
       </el-container>
@@ -33,6 +33,10 @@ body {
   padding: 0px;
 }
 
+.el-header {
+  border-bottom: 1px $hr-color solid;
+}
+
 .common-layout {
   position: absolute;
   top: 0;
@@ -45,19 +49,17 @@ body {
   }
 }
 
-
-
-.menu {
-  background-color: $menu-color;
+.el-aside::-webkit-scrollbar {
+  display: none;
 }
 
 .main {
   background-color: $contain-color;
-  padding-bottom: 50px;
-  text-align: center;
 }
 
 .footer {
   color: $footer-color;
+  height: 50px;
+  text-align: center;
 }
 </style>

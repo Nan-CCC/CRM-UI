@@ -1,28 +1,23 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+import customer from './module/customer';
+import first from "./module/first";
+import sale from "./module/sale";
 // 创建路由器router
-const router = createRouter({
+export default createRouter({
   history: createWebHashHistory(), //hash模式
   routes: [
     {
       path: '/',
-      redirect: '/login',
+      redirect: '/index',
     },
     {
-      path: '/',
-      component: () => import('@/views/Contain/Container.vue'),
-      children: [
-        {
-          path: 'index',
-          component: () => import('@/views/Index/index.vue')
-        },
-        {
-          path: 'data',
-          component: () => import('@/views/Customer/Data.vue')
-        }
-      ]
-    }
-
-
+      path: '/login',
+      hidden: true,
+      component: () => import('@/views/Login/index.vue')
+    },
+    ...first,
+    ...customer,
+    ...sale
   ]
 })
-export default router
+

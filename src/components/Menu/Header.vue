@@ -1,24 +1,21 @@
 <template>
   <div>
     <el-row class="base">
-      <el-col :span="19" style="line-height: 40px;">
-        <span v-for="i in 3" class="title">
-          <span>首页</span>
-          <span v-if="i != 3">></span>
+      <el-col :span="20" style="line-height: 40px;">
+        <span v-for="(i, index) in breadList" class="title">
+          <span>{{ i.meta.name }}</span>
+          <span v-if="index < breadList.length - 1">></span>
         </span>
       </el-col>
       <el-col :span="1">
-        <el-icon size="20" class="icon">
-          <Comment />
-        </el-icon>
-      </el-col>
-      <el-col :span="1">
-        <el-icon size="20" class="icon">
+        <el-icon size="20" class="icon" @click="change1">
+          <div class="tip" v-if="flag1 == true"></div>
           <Calendar />
         </el-icon>
       </el-col>
       <el-col :span="1">
-        <el-icon size="20" class="icon">
+        <el-icon size="20" class="icon" @click="change2">
+          <div class="tip" v-if="flag2 == true"></div>
           <BellFilled />
         </el-icon>
       </el-col>
@@ -31,10 +28,39 @@
         <el-avatar> 客 </el-avatar>
       </el-col>
     </el-row>
+
   </div>
+
 </template>
 
 <script setup>
+import { ref, onMounted, watch } from "vue";
+import { useRouter, useRoute } from "vue-router"
+
+let route = useRoute();
+const breadList = ref('')
+let getMatched = () => {
+  breadList.value = route.matched.filter(item => item.meta && item.meta.name);
+}
+onMounted(() => {
+  getMatched();
+})
+watch(() => route.path, (newValue, oldValue) => { //监听路由路径是否发生变化，之后更改面包屑
+  breadList.value = route.matched.filter(item => item.meta && item.meta.name);
+})
+
+//日程和通知的角标显示
+const flag1 = ref(false)
+const flag2 = ref(false)
+
+function change1() {
+  flag1.value = !flag1.value
+}
+
+function change2() {
+  flag2.value = !flag2.value
+}
+
 
 </script>
 
@@ -42,18 +68,35 @@
 .base {
   margin: 8px -10px;
   color: $header-color;
+  height: 35px;
 
   .icon {
-    margin: 10px;
+    margin: 5px;
+    padding: 5px;
+    cursor: pointer;
+  }
+
+  .tip {
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 10px;
+    position: absolute;
+    margin-bottom: 13px;
+    margin-left: 15px;
+    // right: 183px;
+    // z-index: 1;
+  }
+
+  span {
+    span {
+      margin-right: 10px;
+    }
   }
 }
 
 .title {
   font-size: 14px;
-
-  span {
-    margin: 3px;
-  }
 }
 
 .el-avatar {

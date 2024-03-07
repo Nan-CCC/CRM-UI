@@ -1,8 +1,9 @@
 <template>
-  <div>
-    <el-menu default-active="/index" active-text-color="yellow" class="el-menu-vertical-demo" background-color="#466c23"
-      text-color="#ffffff" unique-opened="true" :router="true" @select="text">
-      <el-menu-item index='1'>
+  <div style="display: flex;height: 100%;">
+    <el-menu :default-active="acticeIndex" active-text-color="yellow" class="el-menu-vertical-demo"
+      background-color="#466c23" text-color="#ffffff" unique-opened="true" router="true" @select="getNow"
+      :router="true">
+      <el-menu-item>
         <template #>
           <div>
             <img src="@/assets/icons/logo4.png" style="height: 45px;" />
@@ -10,49 +11,26 @@
           </div>
         </template>
       </el-menu-item>
-      <el-menu-item index="/index">
-        <el-icon>
-          <HomeFilled />
-        </el-icon>
-        <span>首页</span>
-      </el-menu-item>
-      <el-sub-menu index="2">
-
-        <template #title>
+      <template v-for="(item, index) in getRouter">
+        <el-menu-item v-if="index >= 2 && item.children.length <= 1" :index="index" @click="goPage(item.path)">
           <el-icon>
-            <Avatar />
+            <component :is="item.meta.icon"></component>
           </el-icon>
-          <span>客户数据</span>
-        </template>
-        <el-menu-item index="/data" @click="text2">
-          客户信息
+          <span>{{ item.meta.name }}</span>
         </el-menu-item>
-        <el-menu-item index="2-2">
-          客户分析
-        </el-menu-item>
-      </el-sub-menu>
-      <el-sub-menu index="3">
-
-        <template #title>
-          <el-icon>
-            <DataAnalysis />
-          </el-icon>
-          <span>销售管理</span>
-        </template>
-
-        <el-menu-item index="3-1">
-          增加订单
-        </el-menu-item>
-        <el-menu-item index="3-2">
-          个人业绩
-        </el-menu-item>
-        <el-menu-item index="3-3">
-          查看机会
-        </el-menu-item>
-        <el-menu-item index="3-4">
-          联系客户
-        </el-menu-item>
-      </el-sub-menu>
+        <el-sub-menu :index="index" v-if="index >= 2 && item.children.length > 1">
+          <template #title>
+            <el-icon>
+              <component :is="item.meta.icon"></component>
+            </el-icon>
+            <span>{{ item.meta.name }}</span>
+          </template>
+          <el-menu-item v-for="(i, index2) in item.children" @click="goPage(i.path)" :index="index + '-' + index2">
+            <span>{{ i.meta.name }}</span>
+          </el-menu-item>
+        </el-sub-menu>
+      </template>
+      <!-- 
       <el-sub-menu index="4">
 
         <template #title>
@@ -92,29 +70,34 @@
         <el-menu-item index="5-3">
           服务分析
         </el-menu-item>
-      </el-sub-menu>
+      </el-sub-menu> -->
     </el-menu>
 
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-// index: 选中菜单项的 index,
-//   indexPath: 选中菜单项的 index path,
-//   item: 选中菜单项,
-//     routeResult: vue - router 的返回值（如果 router 为 true）
-function text(index, indexPath, item, routeResult) {
-  console.log(index)
-  console.log(indexPath)
-  console.log(item)
-  console.log(routeResult)
+import { ref, reactive, onMounted } from 'vue'
+import { useRouter, useRoute } from "vue-router"
+
+
+const router = useRouter()
+//获取路由列表
+const getRouter = router.options.routes
+//（路径，父菜单，子菜单）
+const goPage = (path) => {
+  //菜单跳转
+  router.push(path)
 }
 
-//点击获取子菜单实例
-function text2(item) {
-  console.log(item)
+//动态激活菜单
+const acticeIndex = ref(2)
+function getNow(index) {
+  // console.log(index, indexPath, item, routeResult)
+  acticeIndex.value = index
 }
+
+//刷新菜单激活项不变(没出来)
 
 </script>
 
