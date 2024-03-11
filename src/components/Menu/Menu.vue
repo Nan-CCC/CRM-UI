@@ -25,7 +25,8 @@
             </el-icon>
             <span>{{ item.meta.name }}</span>
           </template>
-          <el-menu-item v-for="(i, index2) in item.children" @click="goPage(i.path)" :index="index + '-' + index2">
+          <el-menu-item v-for="(i, index2) in item.children" @click="goPage(i.path)" :index="index + '-' + index2"
+            :disabled="i.path == 'details'">
             <span>{{ i.meta.name }}</span>
           </el-menu-item>
         </el-sub-menu>
@@ -88,7 +89,7 @@ const getRouter = router.options.routes
 const goPage = (path) => {
   //菜单跳转
   router.push(path)
-  console.log(path);
+  //console.log(path);
 }
 
 //动态激活菜单

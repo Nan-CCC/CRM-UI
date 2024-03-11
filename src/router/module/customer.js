@@ -13,7 +13,7 @@ export default [
         component: () => import('@/views/Customer/Data.vue'),
         meta: {
           name: '客户信息'
-        }
+        },
       },
       {
         path: 'analysis',
@@ -21,7 +21,15 @@ export default [
         meta: {
           name: '客户分析'
         }
-      }
+      },
+      {
+        path: 'details',
+        component: () => import('@/views/Customer/Details.vue'),
+        meta: {
+          name: '客户详情'
+        }
+      },
+
     ]
   }
 ]
