@@ -1,0 +1,54 @@
+//element-plus
+//：deep深度选择器
+//！important 提高优先应用权
+//日历划过
+:deep(.el-calendar-table .el-calendar-day:hover) {
+  background-color: $contain-color !important;
+}
+
+//今天字体
+:deep(.el-calendar-table td.is-today) {
+  color: $hr-color;
+}
+
+//默认今天，选中日期背景
+:deep(.el-calendar) {
+  --el-calendar-selected-bg-color: #f1f8eb
+}
+
+//按钮
+:deep(.el-button) {
+  //鼠标划过字体
+  --el-button-hover-text-color: #6ea235;
+  //鼠标划过背景
+  --el-button-hover-bg-color: #f8fbf5;
+  //鼠标划过边框
+  --el-button-hover-border-color: #6ea235;
+  //鼠标点击边框
+  --el-button-active-border-color: #bbdd22;
+
+}
+
+:deep(.el-button--primary) {
+  //按钮背景
+  --el-button-bg-color: #6ea235;
+  //边框
+  --el-button-border-color: #6ea235;
+  //字体
+  --el-button-text-color: #f1f8eb;
+  //点击背景
+  --el-button-active-bg-color: #99b97a;
+  //点击字体
+  --el-button-active-text-color: #f1f8eb;
+}
+
+//输入框
+:deep(.el-input) {
+  --el-input-focus-border: #6ea235;
+  --el-input-focus-border-color: #6ea235;
+}
+
+:root {
+  --el-color-primary: #6ea235;
+  --el-color-primary-light-9: #f8fbf5;
+}

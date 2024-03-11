@@ -8,7 +8,7 @@ export default createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/index',
+      redirect: '/data',
     },
     {
       path: '/login',

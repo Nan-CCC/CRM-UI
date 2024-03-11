@@ -1,7 +1,44 @@
 $content-color: #ffffff;
 $contain-color: #f8fbf5;
+$calender-color: #f1f8eb;
+$plan-color: #e3f0d8;
 $footer-color: #c8e1b1;
 $text-color: #bbdd22;
 $hr-color: #6ea235;
 $header-color: #5e902f;
 $menu-color: #466c23;
+
+//内容背景色+边框阴影
+.bor {
+  background-color: white;
+  box-shadow: 0px 1px 3px #d5e0ca;
+}
+
+//字体大小
+.fs16 {
+  font-size: 16px;
+}
+
+.fs18 {
+  font-size: 18px;
+}
+
+.fs20 {
+  font-size: 20px;
+}
+
+//外边距
+.mt10 {
+  margin-top: 10px;
+}
+
+.mb10 {
+  margin-bottom: 10px;
+}
+
+
+
+//内边距
+.p10 {
+  padding: 10px;
+}

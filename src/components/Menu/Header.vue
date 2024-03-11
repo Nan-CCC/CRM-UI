@@ -1,17 +1,11 @@
 <template>
   <div>
     <el-row class="base">
-      <el-col :span="20" style="line-height: 40px;">
+      <el-col :span="21" style="line-height: 40px;">
         <span v-for="(i, index) in breadList" class="title">
           <span>{{ i.meta.name }}</span>
           <span v-if="index < breadList.length - 1">></span>
         </span>
-      </el-col>
-      <el-col :span="1">
-        <el-icon size="20" class="icon" @click="change1">
-          <div class="tip" v-if="flag1 == true"></div>
-          <Calendar />
-        </el-icon>
       </el-col>
       <el-col :span="1">
         <el-icon size="20" class="icon" @click="change2">
@@ -49,14 +43,8 @@ watch(() => route.path, (newValue, oldValue) => { //监听路由路径是否发�
   breadList.value = route.matched.filter(item => item.meta && item.meta.name);
 })
 
-//日程和通知的角标显示
-const flag1 = ref(false)
+//通知的角标显示
 const flag2 = ref(false)
-
-function change1() {
-  flag1.value = !flag1.value
-}
-
 function change2() {
   flag2.value = !flag2.value
 }

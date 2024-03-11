@@ -88,6 +88,7 @@ const getRouter = router.options.routes
 const goPage = (path) => {
   //菜单跳转
   router.push(path)
+  console.log(path);
 }
 
 //动态激活菜单
