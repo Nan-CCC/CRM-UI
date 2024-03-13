@@ -23,11 +23,13 @@ export default [
         }
       },
       {
-        path: 'details',
+        path: 'details/:id',
+        name: 'Details',
         component: () => import('@/views/Customer/Details.vue'),
         meta: {
           name: '客户详情'
-        }
+        },
+
       },
 
     ]

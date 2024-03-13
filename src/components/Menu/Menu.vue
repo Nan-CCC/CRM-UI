@@ -26,7 +26,7 @@
             <span>{{ item.meta.name }}</span>
           </template>
           <el-menu-item v-for="(i, index2) in item.children" @click="goPage(i.path)" :index="index + '-' + index2"
-            :disabled="i.path == 'details'">
+            :disabled="i.path.includes('details')">
             <span>{{ i.meta.name }}</span>
           </el-menu-item>
         </el-sub-menu>

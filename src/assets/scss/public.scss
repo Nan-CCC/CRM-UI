@@ -1,6 +1,6 @@
 $content-color: #ffffff;
 $contain-color: #f8fbf5;
-$calender-color: #f1f8eb;
+$calender-color: hsl(92, 48%, 95%);
 $plan-color: #e3f0d8;
 $footer-color: #c8e1b1;
 $text-color: #bbdd22;
@@ -28,8 +28,16 @@ $menu-color: #466c23;
 }
 
 //外边距
+.m15 {
+  margin: 15px;
+}
+
 .mt10 {
   margin-top: 10px;
+}
+
+.mt15 {
+  margin-top: 15px;
 }
 
 .mb10 {

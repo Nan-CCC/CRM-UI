@@ -5,6 +5,7 @@
         <span v-for="(i, index) in breadList" class="title">
           <span>{{ i.meta.name }}</span>
           <span v-if="index < breadList.length - 1">></span>
+          <router-link v-if="i.meta.name == '客户详情'" to="/data" class="return">返回</router-link>
         </span>
       </el-col>
       <el-col :span="1">
@@ -85,6 +86,16 @@ function change2() {
 
 .title {
   font-size: 14px;
+
+  .return {
+    color: $header-color ;
+    text-decoration: none;
+
+  }
+
+  .return:active {
+    color: $text-color;
+  }
 }
 
 .el-avatar {

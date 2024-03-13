@@ -68,7 +68,8 @@
     </div>
     <el-table :data="tableData" border @row-click="getData">
       <el-table-column prop="name" label="客户姓名" width="120" />
-      <el-table-column prop="age" label="客户年龄" width="120" />
+      <el-table-column prop="age" label="客户年龄" width="120">
+      </el-table-column>
       <el-table-column prop="phone" label="手机号码" width="180" />
       <el-table-column prop="email" label="电子邮箱" width="200" />
       <el-table-column prop="company" label="所属公司" width="200" />
@@ -78,8 +79,8 @@
         </template>
       </el-table-column>
       <el-table-column label="详情" width="100">
-        <template #default>
-          <el-button type="warning" size="small" @click="toDetail">
+        <template #default="props">
+          <el-button type="warning" size="small" @click="toDetail(props.row.id)">
             查看详情
           </el-button>
         </template>
@@ -150,6 +151,7 @@ const age = [
     label: '60岁以上'
   },
 ]
+
 //增加/修改按钮
 const change = ref(true)
 /**
@@ -259,16 +261,33 @@ const tableData = [
     info: ['经理', '性格好', '大客户']
   },
   {
-    id: 'KH000001',
+    id: 'KH000002',
     name: '花二头',
-    age: '20-',
+    age: '20-30',
     phone: '14521452145',
     email: '145214521@qq.com',
     company: 'xxx有限公司',
     info: ['经理', '性格好', '大客户']
   },
   {
-    id: 'KH000001',
+    id: 'KH000003',
+    name: '花大头',
+    age: '60+',
+    phone: '14521452145',
+    email: '145214521@qq.com',
+    company: 'xxx有限公司',
+    info: ['经理', '性格好', '大客户']
+  },
+  {
+    id: 'KH000004',
+    name: '花二头',
+    age: '20-',
+    phone: '14521452145',
+    email: '145214521@qq.com',
+    company: 'xxx有限公司',
+    info: ['经理', '性格好', '大客户']
+  }, {
+    id: 'KH000005',
     name: '花大头',
     age: '20-',
     phone: '14521452145',
@@ -277,7 +296,7 @@ const tableData = [
     info: ['经理', '性格好', '大客户']
   },
   {
-    id: 'KH000001',
+    id: 'KH000006',
     name: '花二头',
     age: '20-',
     phone: '14521452145',
@@ -285,7 +304,7 @@ const tableData = [
     company: 'xxx有限公司',
     info: ['经理', '性格好', '大客户']
   }, {
-    id: 'KH000001',
+    id: 'KH000007',
     name: '花大头',
     age: '20-',
     phone: '14521452145',
@@ -294,7 +313,7 @@ const tableData = [
     info: ['经理', '性格好', '大客户']
   },
   {
-    id: 'KH000001',
+    id: 'KH000008',
     name: '花二头',
     age: '20-',
     phone: '14521452145',
@@ -302,24 +321,7 @@ const tableData = [
     company: 'xxx有限公司',
     info: ['经理', '性格好', '大客户']
   }, {
-    id: 'KH000001',
-    name: '花大头',
-    age: '20-',
-    phone: '14521452145',
-    email: '145214521@qq.com',
-    company: 'xxx有限公司',
-    info: ['经理', '性格好', '大客户']
-  },
-  {
-    id: 'KH000001',
-    name: '花二头',
-    age: '20-',
-    phone: '14521452145',
-    email: '145214521@qq.com',
-    company: 'xxx有限公司',
-    info: ['经理', '性格好', '大客户']
-  }, {
-    id: 'KH000001',
+    id: 'KH000009',
     name: '花大头',
     age: '20-',
     phone: '14521452145',
@@ -338,6 +340,12 @@ const tableData = [
   },
 
 ]
+// //根据数组值找下表（表格中年龄显示）
+// const switchAge = (val) => {
+//   var x = age.map(item => item.value).indexOf('20-')
+//   console.log(val);
+//   return val
+// }
 //获取一行数据
 const getData = (row, column, event) => {
   change.value = false
@@ -345,10 +353,16 @@ const getData = (row, column, event) => {
     searchForm[i] = row[i]
   }
 }
+
 //跳转查看详情
 const router = useRouter()
-const toDetail = () => {
-  router.push('details')
+const toDetail = (val) => {
+  router.push({
+    name: 'Details',
+    params: {
+      id: val
+    }
+  })
 }
 </script>
 

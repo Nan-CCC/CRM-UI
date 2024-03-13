@@ -31,15 +31,19 @@
 
 :deep(.el-button--primary) {
   //按钮背景
-  --el-button-bg-color: #6ea235;
+  --el-button-bg-color: #6ea235 !important;
   //边框
-  --el-button-border-color: #6ea235;
+  --el-button-border-color: #6ea235 !important;
   //字体
-  --el-button-text-color: #f1f8eb;
+  --el-button-text-color: #f1f8eb !important;
   //点击背景
-  --el-button-active-bg-color: #99b97a;
+  --el-button-active-bg-color: #99b97a !important;
+  --el-button-active-border-color: #99b97a !important;
   //点击字体
-  --el-button-active-text-color: #f1f8eb;
+  --el-button-active-text-color: #e8ebe4 !important;
+
+  --el-button-hover-bg-color: #f1f8eb !important;
+
 }
 
 //输入框
@@ -51,4 +55,6 @@
 :root {
   --el-color-primary: #6ea235;
   --el-color-primary-light-9: #f8fbf5;
+  --el-color-primary-dark-2: #5e902f;
+  --el-color-primary-light-3: #99b767;
 }
