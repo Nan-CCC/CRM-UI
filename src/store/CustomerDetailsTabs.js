@@ -19,4 +19,5 @@ export const useTabsStore = defineStore('tab', () => {
     console.log(isTab.value);
   }
   return { isTab, changeTab }
+
 })
