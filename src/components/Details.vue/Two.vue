@@ -6,7 +6,7 @@
         <el-select v-model="select" size="small" style="width: 90px">
           <el-option v-for="item in option" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
-        <el-input v-model="input" style="width: 150px" size="small" />
+        <el-input v-model="search" style="width: 150px" size="small" clearable />
         <el-button size="small" type="primary">搜索</el-button>
       </div>
     </div>
@@ -14,7 +14,7 @@
       <el-table-column type="expand">
         <template #default="props">
           <div class="expand">
-            <div class="title">服务编号：{{ props.row.id }}</div>
+            <div class="title mb20">服务编号：{{ props.row.id }}</div>
             <el-timeline style="max-width: 600px">
               <el-timeline-item v-for="(item, index) in  props.row.body " :key="index" :timestamp="item.time"
                 placement="top" :color="item.color">
@@ -29,18 +29,20 @@
       <el-table-column prop="date" label="发起时间" />
       <el-table-column label="操作">
         <template #default="prpos">
-          <el-button type="primary" size="small" @click="toOrder(prpos.row.id)">查看详情</el-button>
+          <el-button type="primary" size="small" @click="toOrder(prpos.row.order)">查看详情</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination style="margin-top:10px ;margin-left: 350px;" :page-size="20" :pager-count="11"
-      layout="prev, pager, next" :total="1000" />
+    <div class="flex-center mt10 mb10">
+      <el-pagination :page-size="20" :pager-count="11" layout="prev, pager, next" :total="1000" />
+    </div>
   </div>
 
 </template>
 
 <script setup>
-import { onBeforeMount, onMounted, ref } from 'vue';
+import { ref, defineEmits } from 'vue';
+import { useOrderStore } from '@/store/CustomerDetailsTabs'
 const select = ref('id');
 const option = [
   {
@@ -56,6 +58,7 @@ const option = [
     value: 'date'
   }
 ]
+const search = ref()
 /**
  * 售后
  */
@@ -99,25 +102,20 @@ const tableData = [
   }
 ]
 //查看详情（订单id）
+//子传父
+const emit = defineEmits(['getOrder'])
+//当前订单
+//将详情对应订单传到历史订单
+const useOrder = useOrderStore()
 const toOrder = (val) => {
-  console.log(val)
+  useOrder.transferOrder(val)
+  emit('getOrder')
 
 }
+
 
 </script>
 
 <style scoped lang="scss">
-.expand {
-  padding: 10px 20px;
-
-  .title {
-    color: #b7cca3;
-    font-size: 14px;
-    margin-bottom: 15px;
-  }
-
-  .total {
-    color: #5e902f;
-  }
-}
+@import '@/assets/scss/customDetails.scss';
 </style>

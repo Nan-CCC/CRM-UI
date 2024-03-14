@@ -1,0 +1,19 @@
+.expand {
+  padding: 10px 20px;
+
+  .title {
+    color: #ccc1a3;
+    font-size: 14px;
+  }
+
+  .total {
+    color: #e99000;
+  }
+}
+
+//弹窗内容
+.con {
+  background-color: $calender-color;
+  border-radius: 5px;
+  opacity: 0.9;
+}

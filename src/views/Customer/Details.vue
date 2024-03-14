@@ -1,5 +1,5 @@
 <template>
-  <div style="border: 1px red solid;background-color: #fff;" class="m15">
+  <div style="background-color: #fff;" class="m15">
     <el-descriptions border>
       <el-descriptions-item label="客户编号">{{ data.id }}</el-descriptions-item>
       <el-descriptions-item label="客户姓名">{{ data.name }}</el-descriptions-item>
@@ -20,18 +20,21 @@
         <el-tag type="error" v-else="!false">新用户</el-tag>
       </el-descriptions-item>
     </el-descriptions>
-    <el-tabs v-model="des" class="demo-tabs" @tab-click="handleClick">
-      <el-tab-pane label="历史订单" name="0">
-        <One v-if="store.isTab[0]"></One>
-      </el-tab-pane>
-      <el-tab-pane label="售后记录" name="1">
-        <Two v-if="store.isTab[1]"></Two>
-      </el-tab-pane>
-      <el-tab-pane label="投诉记录" name="2">Role</el-tab-pane>
-      <el-tab-pane label="咨询记录" name="3">Task</el-tab-pane>
-
-
+    <el-tabs v-model="des" @tab-click="handleClick">
+      <el-tab-pane v-for="item in tabsTitle" :label="item.label"></el-tab-pane>
     </el-tabs>
+    <div v-if="des == 0">
+      <One></One>
+    </div>
+    <div v-else-if="des == 1">
+      <Two @getOrder="changeTab"></Two>
+    </div>
+    <div v-else-if="des == 2">
+      <Three></Three>
+    </div>
+    <div v-else>
+      <Four></Four>
+    </div>
   </div>
 </template>
 
@@ -41,9 +44,10 @@
 <script setup>
 import One from '@/components/Details.vue/One.vue';
 import Two from '@/components/Details.vue/Two.vue';
+import Three from '@/components/Details.vue/Three.vue';
+import Four from '@/components/Details.vue/Four.vue';
 import { ref, reactive } from 'vue';
 import { useRoute } from 'vue-router';
-import { useTabsStore } from '@/store/CustomerDetailsTabs.js'
 const router = useRoute()
 //详情客户id
 const id = router.params.id
@@ -66,11 +70,31 @@ const data = reactive(
 /**
  * 标签
  */
-const des = ref('1')
-const store = useTabsStore()
-const handleClick = (tab, event) => {
-  console.log(store.isTab);
-  store.changeTab(tab.props.name)
+const des = ref(0)
+const tabsTitle = ref([
+  {
+    label: '历史订单',
+    value: 0
+  },
+  {
+    label: '售后记录',
+    value: 1
+  },
+  {
+    label: '投诉记录',
+    value: 2
+  },
+  {
+    label: '咨询记录',
+    value: 3
+  },
+])
+const handleClick = (tab) => {
+  des.value = tab.index
+}
+//修改当前tab到0
+const changeTab = () => {
+  des.value = '0'
 }
 </script>
 

@@ -1,6 +1,6 @@
 $content-color: #ffffff;
 $contain-color: #f8fbf5;
-$calender-color: hsl(92, 48%, 95%);
+$calender-color: #f1f8eb;
 $plan-color: #e3f0d8;
 $footer-color: #c8e1b1;
 $text-color: #bbdd22;
@@ -40,8 +40,16 @@ $menu-color: #466c23;
   margin-top: 15px;
 }
 
+.mt20 {
+  margin-top: 20px;
+}
+
 .mb10 {
   margin-bottom: 10px;
+}
+
+.mb20 {
+  margin-bottom: 20px;
 }
 
 .mr10 {
@@ -56,4 +64,10 @@ $menu-color: #466c23;
 //浮动
 .fr {
   float: right;
+}
+
+//flex居中
+.flex-center {
+  display: flex;
+  justify-content: center;
 }

@@ -6,7 +6,7 @@
         <el-select v-model="select" size="small" style="width: 90px">
           <el-option v-for="item in option" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
-        <el-input v-model="input" style="width: 150px" size="small" />
+        <el-input v-model="input" style="width: 150px" size="small" clearable />
         <el-button size="small" type="primary">搜索</el-button>
       </div>
     </div>
@@ -16,14 +16,14 @@
         <template #default="props">
           <div class="expand">
             <div class="title">经办员工-{{ props.row.userId }}-{{ props.row.user }}</div>
-            <el-table :data="props.row.product">
+            <el-table :data="props.row.product" border>
               <el-table-column label="产品编号" prop="proId" />
               <el-table-column label="产品名称" prop="proName" />
               <el-table-column label="数量" prop="num" />
               <el-table-column label="单价" prop="price" />
             </el-table>
             <p class="fr fs20 total">共计：{{ 205.2 }}￥</p>
-            <div class="mt15">
+            <div class="mt20">
               <span>合同：</span>
               <el-button type="primary">点击下载</el-button>
             </div>
@@ -37,14 +37,15 @@
       <el-table-column prop="user" label="经办员工" width="180" />
       <el-table-column prop="date" label="创建时间" />
     </el-table>
-    <el-pagination style="margin-top:10px ;margin-left: 350px;" :page-size="20" :pager-count="11"
-      layout="prev, pager, next" :total="1000" />
+    <div class="flex-center mt10 mb10">
+      <el-pagination :page-size="20" :pager-count="11" layout="prev, pager, next" :total="1000" />
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-
+import { useOrderStore } from '@/store/CustomerDetailsTabs'
 /**
  * 搜索框
  */
@@ -64,7 +65,13 @@ const option = [
     value: 'date'
   }
 ]
-
+//input
+const input = ref('')
+//从售后记录跳转到具体订单
+//使用搜索完成
+//获取售后的对应的order
+const useOrder = useOrderStore()
+input.value = useOrder.nowOrderId
 /**
  * 表格
  */
@@ -98,16 +105,5 @@ const tableData = [
 </script>
 
 <style scoped lang="scss">
-.expand {
-  padding: 10px 20px;
-
-  .title {
-    color: #b7cca3;
-    font-size: 14px;
-  }
-
-  .total {
-    color: #5e902f;
-  }
-}
+@import '@/assets/scss/customDetails.scss';
 </style>
