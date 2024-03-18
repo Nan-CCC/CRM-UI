@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row class="base">
+    <el-row class="box">
       <el-col :span="21" style="line-height: 40px;">
         <span v-for="(i, index) in breadList" class="title">
           <span>{{ i.meta.name }}</span>
@@ -36,9 +36,11 @@ let route = useRoute();
 const breadList = ref('')
 let getMatched = () => {
   breadList.value = route.matched.filter(item => item.meta && item.meta.name);
+
 }
 onMounted(() => {
   getMatched();
+
 })
 watch(() => route.path, (newValue, oldValue) => { //监听路由路径是否发生变化，之后更改面包屑
   breadList.value = route.matched.filter(item => item.meta && item.meta.name);
@@ -54,7 +56,7 @@ function change2() {
 </script>
 
 <style scoped lang="scss">
-.base {
+.box {
   margin: 8px -10px;
   color: $header-color;
   height: 35px;

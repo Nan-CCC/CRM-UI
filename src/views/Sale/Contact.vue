@@ -1,18 +1,11 @@
 <template>
-  <div>
+  <div class="base bor p10" style="height: 10px;">
     <h2>{{ message }}</h2>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      message: 'Hello'
-    }
-  },
+<script setup>
 
-}
 </script>
 
-<style scoped></style>
+<style scoped lang="scss"></style>

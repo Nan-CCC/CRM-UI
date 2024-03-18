@@ -9,14 +9,34 @@ export default [
     },
     children: [
       {
-        path: 'addorder',
-        component: () => import('@/views/Sale/Addorder.vue'),
+        path: 'myorder',
+        name: 'Myorder',
+        redirect: 'myorder/addorder',
+        component: () => import('@/views/Sale/Myorder.vue'),
         meta: {
           name: '增加订单'
-        }
+        },
+        children: [
+          {
+            path: 'orders',
+            name: 'Orders',
+            component: () => import('@/views/Sale/myorder/Orders.vue'),
+          },
+          {
+            path: 'addorder',
+            name: 'Addorder',
+            component: () => import('@/views/Sale/myorder/Addorder.vue'),
+          },
+          {
+            path: 'ordering',
+            name: 'Ordering',
+            component: () => import('@/views/Sale/myorder/Ordering.vue')
+          }
+        ]
       },
       {
         path: 'person',
+        name: 'Person',
         component: () => import('@/views/Sale/Person.vue'),
         meta: {
           name: '个人业绩'
@@ -24,6 +44,7 @@ export default [
       },
       {
         path: 'chance',
+        name: 'Chance',
         component: () => import('@/views/Sale/Chance.vue'),
         meta: {
           name: '查看机会'
@@ -31,6 +52,7 @@ export default [
       },
       {
         path: 'contact',
+        name: 'Contact',
         component: () => import('@/views/Sale/Contact.vue'),
         meta: {
           name: '联系客户'

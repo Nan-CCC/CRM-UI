@@ -58,3 +58,11 @@
   --el-color-primary-dark-2: #5e902f;
   --el-color-primary-light-3: #99b767;
 }
+
+//统计字体
+:deep(.el-statistic) {
+  --el-statistic-content-font-size: 50px !important;
+}
+
+//步骤条
+//当前步骤颜色

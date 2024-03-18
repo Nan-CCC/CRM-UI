@@ -1,6 +1,7 @@
 export default [
   {
     path: '/',
+    name: 'index',
     redirect: '/index',
     component: () => import('@/views/Layout/index.vue'),
     meta: {
@@ -10,7 +11,6 @@ export default [
     children: [
       {
         path: 'index',
-        name: 'index',
         component: () => import('@/views/Index/index.vue')
       },
     ]

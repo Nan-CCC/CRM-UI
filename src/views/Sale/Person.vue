@@ -4,15 +4,8 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      message: 'Hello'
-    }
-  },
+<script setup>
 
-}
 </script>
 
-<style scoped></style>
+<style scoped lang="scss"></style>

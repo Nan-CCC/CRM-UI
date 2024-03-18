@@ -10,6 +10,7 @@ export default [
     children: [
       {
         path: 'data',
+        name: 'Data',
         component: () => import('@/views/Customer/Data.vue'),
         meta: {
           name: '客户信息'
@@ -17,6 +18,7 @@ export default [
       },
       {
         path: 'analysis',
+        name: 'Analysis',
         component: () => import('@/views/Customer/Analysis.vue'),
         meta: {
           name: '客户分析'

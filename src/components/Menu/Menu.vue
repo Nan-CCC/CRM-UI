@@ -12,7 +12,7 @@
         </template>
       </el-menu-item>
       <template v-for="(item, index) in getRouter">
-        <el-menu-item v-if="index >= 2 && item.children.length <= 1" :index="index" @click="goPage(item.path)">
+        <el-menu-item v-if="index >= 2 && item.children.length <= 1" :index="index" @click="goPage(item.name)">
           <el-icon>
             <component :is="item.meta.icon"></component>
           </el-icon>
@@ -25,7 +25,7 @@
             </el-icon>
             <span>{{ item.meta.name }}</span>
           </template>
-          <el-menu-item v-for="(i, index2) in item.children" @click="goPage(i.path)" :index="index + '-' + index2"
+          <el-menu-item v-for="(i, index2) in item.children" @click="goPage(i.name)" :index="index + '-' + index2"
             :disabled="i.path.includes('details')">
             <span>{{ i.meta.name }}</span>
           </el-menu-item>
@@ -86,10 +86,10 @@ const router = useRouter()
 //获取路由列表
 const getRouter = router.options.routes
 //（路径，父菜单，子菜单）
-const goPage = (path) => {
+const goPage = (val) => {
   //菜单跳转
-  router.push(path)
-  //console.log(path);
+  router.push({ name: val })
+  // console.log(val);
 }
 
 //动态激活菜单

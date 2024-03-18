@@ -21,7 +21,7 @@
       </el-descriptions-item>
     </el-descriptions>
     <el-tabs v-model="des" @tab-click="handleClick">
-      <el-tab-pane v-for="item in tabsTitle" :label="item.label"></el-tab-pane>
+      <el-tab-pane v-for="item in tabsTitle" :label="item.label" :name="item.value"></el-tab-pane>
     </el-tabs>
     <div v-if="des == 0">
       <One></One>
@@ -42,10 +42,10 @@
 
 
 <script setup>
-import One from '@/components/Details.vue/One.vue';
-import Two from '@/components/Details.vue/Two.vue';
-import Three from '@/components/Details.vue/Three.vue';
-import Four from '@/components/Details.vue/Four.vue';
+import One from '@/components/Details/One.vue';
+import Two from '@/components/Details/Two.vue';
+import Three from '@/components/Details/Three.vue';
+import Four from '@/components/Details/Four.vue';
 import { ref, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 const router = useRoute()
@@ -90,11 +90,11 @@ const tabsTitle = ref([
   },
 ])
 const handleClick = (tab) => {
-  des.value = tab.index
+  // des.value = tab.index
 }
 //修改当前tab到0
 const changeTab = () => {
-  des.value = '0'
+  des.value = 0
 }
 </script>
 

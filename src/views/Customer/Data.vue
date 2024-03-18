@@ -64,7 +64,6 @@
         <el-input size="small" v-model="search" style="width: 150px;"></el-input>
         <el-button size="small" type="primary">搜索</el-button>
       </div>
-
     </div>
     <el-table :data="tableData" border @row-click="getData">
       <el-table-column prop="name" label="客户姓名" width="120" />
@@ -86,7 +85,8 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination class="mt10 page" :page-size="20" :pager-count="11" layout="prev, pager, next" :total="1000" />
+    <el-pagination class="mt10 flex-center" :page-size="20" :pager-count="11" layout="prev, pager, next"
+      :total="1000" />
   </div>
 </template>
 
@@ -372,21 +372,15 @@ const toDetail = (val) => {
   --el-input-width: 299px;
 }
 
-.base {
-  margin: 15px auto;
-  width: 96%;
 
-  .tag {
-    margin-right: 25px;
-  }
 
-  .tool {
-    border-top: 1px $plan-color solid;
-    padding: 10px 0px;
-  }
 
-  .page {
-    margin-left: 350px;
-  }
+.tag {
+  margin-right: 25px;
+}
+
+.tool {
+  border-top: 1px $plan-color solid;
+  padding: 10px 0px;
 }
 </style>

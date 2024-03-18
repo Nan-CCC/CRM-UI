@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { useOrderStore } from '@/store/CustomerDetailsTabs'
 const select = ref('id');
 const option = [

@@ -9,7 +9,9 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "core-js": "^3.8.3",
+    "echarts": "^5.5.0",
     "element-plus": "^2.6.0",
+    "elui-china-area-dht": "^2.0.0",
     "pinia": "^2.1.7",
     "vue": "^3.2.13",
     "vue-router": "^4.3.0"
