@@ -9,6 +9,14 @@ export default [
     },
     children: [
       {
+        path: 'public',
+        name: 'Public',
+        component: () => import('@/views/Customer/Public.vue'),
+        meta: {
+          name: '公海客户'
+        },
+      },
+      {
         path: 'data',
         name: 'Data',
         component: () => import('@/views/Customer/Data.vue'),
