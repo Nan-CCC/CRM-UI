@@ -2,9 +2,7 @@
   <div>
     <el-tabs v-model="des" type="card" class="demo-tabs" @tab-click="handleClick">
       <el-tab-pane v-for="item in tabs" :label="item.label" :name="item.name">
-
       </el-tab-pane>
-
     </el-tabs>
     <router-view />
   </div>
@@ -14,7 +12,6 @@
 import { ref, reactive } from 'vue';
 import { useRouter, useRoute } from "vue-router"
 const router = useRouter()
-const route = useRoute()
 
 //tab
 const des = ref('Addorder')

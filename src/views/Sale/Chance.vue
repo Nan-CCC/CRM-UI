@@ -4,7 +4,7 @@
       <el-col :span="18">
         <div class="bor mr10" style="height: 760px;">
           <div class="tool">
-            <el-button size="small" type="primary">新建客户</el-button>
+            <el-button size="small" type="primary" @click="open">新建客户</el-button>
             <el-button size="small">导出Excel</el-button>
             <div class="fr">
               <el-select v-model="select" size="small" style="width: 90px">
@@ -32,7 +32,7 @@
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="205">
               <template #default="props">
-                <el-button size="small" type="warning" @click="update">
+                <el-button size="small" type="warning" @click="update(props.row)">
                   编辑
                 </el-button>
                 <el-button size="small" type="danger" @click="deleteById(props.row.id, props.$index)">
@@ -49,41 +49,40 @@
         </div>
       </el-col>
       <el-col :span="6">
-        <div class="bor mb10" style="height: 375px;text-align: center;">
-          <div style="border-bottom: 1px solid #ddd;padding: 5px;color: #5e902f;">
+        <div class="bor mb10 top">
+          <div class="toptitle">
             本月热销产品</div>
-          <div v-for="(item, index) in 10"
-            style="padding: 5px;font-weight: 100;opacity: 0.8;border-top: 1px #eee solid;line-height: 21px;">
-            <div style="display: inline-block;font-weight: bolder;color:#5e902f;width: 30px;">
+          <div v-for="(item, index) in 10" class="con">
+            <div class="child1">
               {{ index + 1 }}
             </div>
-            <span style="margin-right: 60px;">混纺绞丝纱</span>
-            <span style="color: #df6717;font-weight: 400;">1202</span>
-            <span style="font-size: 12px;color: #aaa;">份订单</span>
+            <span class="child2">混纺绞丝纱</span>
+            <span class="child3">1202</span>
+            <span class="child4">份订单</span>
           </div>
         </div>
-        <div class="bor mb10" style="height: 375px;text-align: center;">
-          <div style="border-bottom: 1px solid #ddd;padding: 5px;color: #5e902f;">
+        <div class="bor mb10 top">
+          <div class="toptitle">
             本月咨询热搜
           </div>
-          <div v-for="(item, index) in 10"
-            style="padding: 5px;font-weight: 100;opacity: 0.8;border-top: 1px #eee solid;line-height: 21px;">
-            <div style="display: inline-block;font-weight: bolder;color:#5e902f;width: 30px;">
+          <div v-for="(item, index) in 10" class="con">
+            <div class="child1">
               {{ index + 1 }}
             </div>
-            <span style="margin-right: 60px;">售后</span>
-            <span style="color: #df6717;font-weight: 400;">1202</span>
-            <span style="font-size: 12px;color: #aaa;">次</span>
+            <span class="child2">售后</span>
+            <span class="child3">1202</span>
+            <span class="child4">次</span>
           </div>
         </div>
       </el-col>
     </el-row>
+    <Dialog ref="DialogRef"></Dialog>
   </div>
 </template>
 
 <script setup>
-import { reactive } from 'vue';
-
+import { reactive, ref } from 'vue';
+import Dialog from '@/components/Chance/Dialog.vue';
 const tableData = reactive([
   {
     id: 'KH000002',
@@ -221,8 +220,18 @@ const tableData = reactive([
     from: '春日畅想',
   }
 ])
+//弹窗组件
+const visable = ref(false)
+//弹窗主键
+const DialogRef = ref(null)
+//新建客户
+function open() {
+  DialogRef.value.handleOpen(true)
+}
 //编辑客户
-
+function update(val) {
+  DialogRef.value.handleOpen(true, val.id)
+}
 //删除客户
 function deleteById(val, index) {
   tableData.splice(index, 1);
@@ -233,5 +242,45 @@ function deleteById(val, index) {
 .tool {
   border-top: 1px $plan-color solid;
   padding: 10px 0px;
+}
+
+.top {
+  height: 375px;
+  text-align: center;
+
+  .toptitle {
+    border-bottom: 1px solid #ddd;
+    padding: 5px;
+    color: #5e902f;
+  }
+
+  .con {
+    padding: 5px;
+    font-weight: 100;
+    opacity: 0.8;
+    border-top: 1px #eee solid;
+    line-height: 21px;
+
+    .child1 {
+      display: inline-block;
+      font-weight: bolder;
+      color: #5e902f;
+      width: 30px;
+    }
+
+    .child2 {
+      margin-right: 60px;
+    }
+
+    .child3 {
+      color: #df6717;
+      font-weight: 400;
+    }
+
+    .child4 {
+      font-size: 12px;
+      color: #aaa;
+    }
+  }
 }
 </style>
