@@ -76,7 +76,7 @@
         </div>
       </el-col>
     </el-row>
-    <Dialog ref="DialogRef"></Dialog>
+    <Dialog ref="dialogRef"></Dialog>
   </div>
 </template>
 
@@ -221,16 +221,14 @@ const tableData = reactive([
   }
 ])
 //弹窗组件
-const visable = ref(false)
-//弹窗主键
-const DialogRef = ref(null)
+const dialogRef = ref(null)
 //新建客户
 function open() {
-  DialogRef.value.handleOpen(true)
+  dialogRef.value.handleOpen(true)
 }
 //编辑客户
 function update(val) {
-  DialogRef.value.handleOpen(true, val.id)
+  dialogRef.value.handleOpen(true, val.id)
 }
 //删除客户
 function deleteById(val, index) {
@@ -282,5 +280,9 @@ function deleteById(val, index) {
       color: #aaa;
     }
   }
+}
+
+.page {
+  padding-bottom: 10px;
 }
 </style>

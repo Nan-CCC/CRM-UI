@@ -17,34 +17,33 @@
 }
 
 //按钮
-:deep(.el-button) {
-  //鼠标划过字体
-  --el-button-hover-text-color: #6ea235;
-  //鼠标划过背景
-  --el-button-hover-bg-color: #f8fbf5;
-  //鼠标划过边框
-  --el-button-hover-border-color: #6ea235;
-  //鼠标点击边框
-  --el-button-active-border-color: #bbdd22;
+// :deep(.el-button) {
+//   //鼠标划过字体
+//   --el-button-hover-text-color: #6ea235;
+//   //鼠标划过背景
+//   --el-button-hover-bg-color: #f8fbf5;
+//   //鼠标划过边框
+//   --el-button-hover-border-color: #6ea235;
+//   //鼠标点击边框
+//   --el-button-active-border-color: #bbdd22;
 
-}
+// }
 
-:deep(.el-button--primary) {
-  //按钮背景
-  --el-button-bg-color: #6ea235 !important;
-  //边框
-  --el-button-border-color: #6ea235 !important;
-  //字体
-  --el-button-text-color: #f1f8eb !important;
-  //点击背景
-  --el-button-active-bg-color: #99b97a !important;
-  --el-button-active-border-color: #99b97a !important;
-  //点击字体
-  --el-button-active-text-color: #e8ebe4 !important;
+// :deep(.el-button--primary) {
+//   //按钮背景
+//   --el-button-bg-color: #6ea235 !important;
+//   //边框
+//   --el-button-border-color: #6ea235 !important;
+//   //字体
+//   --el-button-text-color: #f1f8eb !important;
+//   //点击背景
+//   --el-button-active-bg-color: #99b97a !important;
+//   --el-button-active-border-color: #99b97a !important;
+//   //点击字体
+//   --el-button-active-text-color: #e8ebe4 !important;
 
-  --el-button-hover-bg-color: #f1f8eb !important;
-
-}
+//   --el-button-hover-bg-color: #f1f8eb !important;
+// }
 
 //输入框
 :deep(.el-input) {
@@ -63,6 +62,3 @@
 :deep(.el-statistic) {
   --el-statistic-content-font-size: 50px !important;
 }
-
-//步骤条
-//当前步骤颜色

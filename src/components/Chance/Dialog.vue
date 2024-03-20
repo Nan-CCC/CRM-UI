@@ -1,8 +1,8 @@
 <template>
   <div>
-    <el-dialog v-model="dialogVisible" destroy-on-close :title="cusId ? '修改客户信息' : '新建客户信息'" width="600">
+    <el-dialog v-model="dialogVisible" destroy-on-close :title="cusId ? '修改客户信息' : '新建客户信息'" width="540">
       <div>
-        <el-form :model="customInfo" label-position="right" label-width="80px">
+        <el-form :model="customInfo" label-position="right" label-width="80px" style="max-width: 480px;">
           <el-form-item label="客户名称">
             <el-input v-model="customInfo.name" />
           </el-form-item>
@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, defineProps } from 'vue';
+import { ref, reactive } from 'vue';
 
 const dialogVisible = ref(false)
 //表单数据
