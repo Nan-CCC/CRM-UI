@@ -31,54 +31,14 @@
           </el-menu-item>
         </el-sub-menu>
       </template>
-      <!-- 
-      <el-sub-menu index="4">
 
-        <template #title>
-          <el-icon>
-            <Calendar />
-          </el-icon>
-          <span>营销活动</span>
-        </template>
-        <el-menu-item index="4-1">
-          市场分析
-        </el-menu-item>
-        <el-menu-item index="4-2">
-          增加活动
-        </el-menu-item>
-        <el-menu-item index="4-3">
-          进行中活动
-        </el-menu-item>
-        <el-menu-item index="4-4">
-          已结束活动
-        </el-menu-item>
-      </el-sub-menu>
-
-      <el-sub-menu index="5">
-
-        <template #title>
-          <el-icon>
-            <Headset />
-          </el-icon>
-          <span>客户服务</span>
-        </template>
-        <el-menu-item index="5-1">
-          待处理服务
-        </el-menu-item>
-        <el-menu-item index="5-2">
-          已处理服务
-        </el-menu-item>
-        <el-menu-item index="5-3">
-          服务分析
-        </el-menu-item>
-      </el-sub-menu> -->
     </el-menu>
 
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter, useRoute } from "vue-router"
 
 

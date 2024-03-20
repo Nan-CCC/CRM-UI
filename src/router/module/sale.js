@@ -4,7 +4,7 @@ export default [
     redirect: '/index',
     component: () => import('@/views/Layout/index.vue'),
     meta: {
-      icon: 'DataAnalysis',
+      icon: 'Histogram',
       name: '销售管理'
     },
     children: [
