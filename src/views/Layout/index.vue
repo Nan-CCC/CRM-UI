@@ -10,7 +10,7 @@
         </el-header>
         <el-scrollbar class="main">
           <el-main>
-            <router- view />
+            <router-view />
             <p class="footer">enterprisecrm@2024-01-01</p>
           </el-main>
         </el-scrollbar>

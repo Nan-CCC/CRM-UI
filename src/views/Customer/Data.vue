@@ -71,7 +71,7 @@
       </el-table-column>
       <el-table-column prop="phone" label="手机号码" width="180" />
       <el-table-column prop="email" label="电子邮箱" width="200" />
-      <el-table-column prop="company" label="所属公司" width="200" />
+      <el-table-column prop="company" label="所属公司" width="200" show-overflow-tooltip />
       <el-table-column label="备注">
         <template #default="scope">
           <el-tag type="primary" v-for=" item  in  scope.row.info " class="mr10">{{ item }}</el-tag>
@@ -266,7 +266,7 @@ const tableData = [
     age: '20-30',
     phone: '14521452145',
     email: '145214521@qq.com',
-    company: 'xxx有限公司',
+    company: 'xxx有限公司xxx有限公司xxx有限公司xxx有限公司',
     info: ['经理', '性格好', '大客户']
   },
   {
