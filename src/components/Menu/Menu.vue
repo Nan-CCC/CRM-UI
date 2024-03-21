@@ -12,7 +12,8 @@
         </template>
       </el-menu-item>
       <template v-for="(item, index) in getRouter">
-        <el-menu-item v-if="index >= 2 && item.children.length <= 1" :index="index" @click="goPage(item.name)">
+        <el-menu-item v-if="index >= 2 && item.children.length <= 1" :index="index"
+          @click="goPage(item.children[0].name)">
           <el-icon>
             <component :is="item.meta.icon"></component>
           </el-icon>

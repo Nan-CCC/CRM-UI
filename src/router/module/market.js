@@ -1,7 +1,6 @@
 export default [
   {
     path: '/',
-    name: 'index',
     redirect: '/index',
     component: () => import('@/views/Layout/index.vue'),
     meta: {
@@ -18,21 +17,14 @@ export default [
         },
       },
       {
-        path: 'activing',
-        name: 'Activing',
-        component: () => import('@/views/Marketing/Activing.vue'),
+        path: 'mymarket',
+        name: 'MyMarket',
+        component: () => import('@/views/Marketing/MyMarket.vue'),
         meta: {
-          name: '进行中活动'
+          name: '我的活动'
         },
       },
-      {
-        path: 'actived',
-        name: 'Actived',
-        component: () => import('@/views/Marketing/Actived.vue'),
-        meta: {
-          name: '已完成活动'
-        },
-      },
+
       {
         path: 'marketanalysis',
         name: 'MarketAnalysis',

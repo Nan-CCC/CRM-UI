@@ -1,8 +1,7 @@
 export default [
   {
     path: '/',
-    name: 'index',
-    redirect: '/index',
+
     component: () => import('@/views/Layout/index.vue'),
     meta: {
       icon: 'HomeFilled',
@@ -11,6 +10,7 @@ export default [
     children: [
       {
         path: 'index',
+        name: 'Index',
         component: () => import('@/views/Index/index.vue')
       },
     ]
