@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-tabs v-model="des" type="card" class="demo-tabs" @tab-click="handleClick">
+    <el-tabs v-model="des" type="card" class="demo-tabs ml15" @tab-click="handleClick">
       <el-tab-pane v-for="item in tabs" :label="item.label" :name="item.name">
       </el-tab-pane>
     </el-tabs>

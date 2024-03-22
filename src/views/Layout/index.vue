@@ -1,7 +1,7 @@
 <template>
   <div class="common-layout">
     <el-container>
-      <el-aside width="225px" style="box-shadow: 1px 1px 10px #888;z-index: 1; ">
+      <el-aside width="225px" style="box-shadow: 1px 1px 10px #888;z-index: 1;">
         <Menu></Menu>
       </el-aside>
       <el-container>
