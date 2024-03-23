@@ -1,7 +1,6 @@
 export default [
   {
     path: '/',
-
     component: () => import('@/views/Layout/index.vue'),
     meta: {
       icon: 'HomeFilled',
