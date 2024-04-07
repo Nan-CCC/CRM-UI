@@ -12,14 +12,14 @@
         </template>
       </el-menu-item>
       <template v-for="(item, index) in getRouter">
-        <el-menu-item v-if="index >= 2 && item.children.length <= 1" :index="index"
+        <el-menu-item v-if="index >= 3 && item.children.length <= 1" :index="index"
           @click="goPage(item.children[0].name)">
           <el-icon>
             <component :is="item.meta.icon"></component>
           </el-icon>
           <span>{{ item.meta.name }}</span>
         </el-menu-item>
-        <el-sub-menu :index="index" v-if="index >= 2 && item.children.length > 1">
+        <el-sub-menu :index="index" v-if="index >= 3 && item.children.length > 1">
           <template #title>
             <el-icon>
               <component :is="item.meta.icon"></component>

@@ -34,7 +34,7 @@
       </el-table-column>
     </el-table>
     <div class="flex-center mt10 mb10">
-      <el-pagination :page-size="20" :pager-count="11" layout="prev, pager, next" :total="1000" />
+      <el-pagination :page-size="20" :pager-count="11" layout="prev, pager, next" :total="10" />
     </div>
   </div>
 

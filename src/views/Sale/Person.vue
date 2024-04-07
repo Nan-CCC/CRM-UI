@@ -75,7 +75,7 @@
       </el-col>
       <el-col :span="16">
         <div class="bor" style="height: 440px;">
-          折线图（选横纵坐标，时间2余1）
+          <div id="line" style="width: 100%;height: 100%;"></div>
         </div>
       </el-col>
     </el-row>
@@ -83,9 +83,11 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useTransition } from '@vueuse/core'
 import { ElTree } from 'element-plus'
+import * as echarts from 'echarts';
+
 //本月订单总额
 const nowNum = ref(0)
 const outputValue = useTransition(nowNum, {
@@ -247,6 +249,26 @@ const data = [
 function getCheckedNodes() {
   console.log(treeRef.value.getCheckedNodes(false, false))
 }
+
+onMounted(() => {
+  // 基于准备好的dom，初始化echarts实例
+  var myChart = echarts.init(document.getElementById('line'));
+  // 绘制图表
+  myChart.setOption({
+    tooltip: {},
+    xAxis: {
+      data: ['一月', '二月', '三月', '四月', '五月', '六月']
+    },
+    yAxis: {},
+    series: [
+      {
+        name: '销量',
+        type: 'bar',
+        data: [5, 20, 36, 10, 10, 20]
+      }
+    ]
+  });
+})
 </script>
 
 <style scoped lang="scss">

@@ -27,14 +27,14 @@
           </el-col>
           <el-col :span="16">
             <div class="bor" style="height: 395px;margin-left: 10px;">
-              饼图
+              <div id="pie" style="width: 100%;height: 100%;"></div>
             </div>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
             <div class="bor" style="height:395px">
-
+              <div class="line"></div>
             </div>
           </el-col>
         </el-row>
@@ -47,8 +47,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useTransition } from '@vueuse/core'
+
+import * as echarts from 'echarts';
+
 //现有客户数
 const nowNum = ref(0)
 const outputValue = useTransition(nowNum, {
@@ -69,8 +72,67 @@ const outputValue3 = useTransition(nowNum3, {
   duration: 1500,
 })
 nowNum3.value = 23
-</script>
+var streetData = [
+  {
+    name: 'A等级',
+    value: 12
+  },
+  {
+    name: 'B等级',
+    value: 23
+  },
+  {
+    name: 'C等级',
+    value: 234
+  },
+  {
+    name: 'D等级',
+    value: 45
+  },
+  {
+    name: 'M等级',
+    value: 345
+  },
+]
 
+onMounted(() => {
+  //基于准备好的dom，初始化echarts实例
+  var myChart = echarts.init(document.getElementById('pie'));
+  // 绘制图表
+  myChart.setOption({
+    title: {
+      text: `{primary|近三年客户来源分布}`,
+      left: 'center',
+      top: '5%',
+      textStyle: {
+        rich: {
+          primary: {
+            color: '#aaa',
+            fontWeight: 700,
+            fontSize: 24,
+            lineHeight: 30,
+          },
+
+        }
+      }
+    },
+    series: [
+      {
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['50%', '55%'],
+        label: {
+          show: false,
+          position: 'left'
+        },
+        data: streetData
+      },
+
+
+    ]
+  });
+})
+</script>
 <style scoped lang="scss">
 .el-statistic {
   --el-statistic-content-font-size: 28px;

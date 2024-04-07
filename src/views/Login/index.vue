@@ -10,7 +10,7 @@
           <el-input v-model="loginForm.user" />
         </el-form-item>
         <el-form-item label="密码">
-          <el-input v-model="loginForm.password" />
+          <el-input v-model="loginForm.password" type="password" />
         </el-form-item>
         <el-form-item label="验证码">
           <el-row style="width: 306px;">
@@ -18,7 +18,9 @@
               <el-input v-model="loginForm.verify" />
             </el-col>
             <el-col :span="6">
-              <div style="border: 1px solid red;height: 32px;width: 100%;"></div>
+              <div style="height:35px ;width: 100%;">
+                <img :src="src" style="height: 100%;width: 100%;" @click="changeSrc" />
+              </div>
             </el-col>
           </el-row>
         </el-form-item>
@@ -33,19 +35,32 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router"
+import { useUserStore } from '@/store/user'
 
 const loginForm = ref({
   user: '',
   password: '',
   verify: ''
 })
+//点击修改验证码
+var src = ref('/api/common/kaptcha')
+function changeSrc() {
+  src.value = '/api/common/kaptcha?t' + new Date().getTime();
+}
+
+const userStore = useUserStore()
 
 const router = useRouter()
-//获取路由列表
-const getRouter = router.options.routes
+
 function toIndex() {
-  router.push('index')
+  userStore.getUserInfo(loginForm.value)
+  //var user = sessionStorage.getItem("user")
+  // userStore.userInfo.then((res) => {
+  //   console.log(res);
+  // })
+
 }
+
 </script>
 
 <style scoped lang="scss">

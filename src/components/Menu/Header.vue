@@ -20,27 +20,32 @@
         </el-icon>
       </el-col>
       <el-col :span="1">
-        <el-avatar> 客 </el-avatar>
+        <el-tooltip placement="bottom" effect="light">
+          <el-avatar @click="visible = !visible">临时</el-avatar>
+          <template #content>
+            <div @click="exit" style="cursor: pointer;">
+              退出
+            </div>
+          </template>
+        </el-tooltip>
       </el-col>
     </el-row>
 
   </div>
 
 </template>
-
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import { useRouter, useRoute } from "vue-router"
-
+import { useRoute } from "vue-router"
+import { getUserInfoByToken } from "@/api/user"
 let route = useRoute();
 const breadList = ref('')
 let getMatched = () => {
   breadList.value = route.matched.filter(item => item.meta && item.meta.name);
-
 }
+
 onMounted(() => {
   getMatched();
-
 })
 watch(() => route.path, (newValue, oldValue) => { //监听路由路径是否发生变化，之后更改面包屑
   breadList.value = route.matched.filter(item => item.meta && item.meta.name);
@@ -51,11 +56,19 @@ const flag2 = ref(false)
 function change2() {
   flag2.value = !flag2.value
 }
+//头像弹出框
+const visible = ref(false)
 
-
+function exit() {
+  console.log("退退退");
+}
 </script>
 
 <style scoped lang="scss">
+.flex-grow {
+  flex-grow: 1;
+}
+
 .box {
   margin: 8px -10px;
   color: $header-color;

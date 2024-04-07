@@ -13,20 +13,19 @@ module.exports = defineConfig({
     }
   },
 
-  // configureWebpack: {
-  //   devServer: {
-  //     port: 3000,
-  //     proxy: {
-  //       '/api': {
-  //         target: 'http://localhost:8080/1026text',
-  //         changeOrigin: true,
-  //         pathRewrite: {
-  //           '^/api': ''
-  //         }
-  //       },
-  //     }
-  //   },
-  // }
+  configureWebpack: {
+    devServer: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:8088/crm-api/',
+          changeOrigin: true,
+          pathRewrite: {
+            '^/api': ''
+          }
+        },
+      }
+    },
+  }
 
 })
 

@@ -15,9 +15,9 @@
         <el-tag v-for="item in data.info" class="mr10" type="warning">{{ item }}</el-tag>
       </el-descriptions-item>
       <el-descriptions-item label="评级">
-        <el-tag type="primary" v-if="false">老客户</el-tag>
+        <el-tag type="primary" v-if="!false">老客户</el-tag>
         <el-tag type="info" v-else-if="false">普通</el-tag>
-        <el-tag type="error" v-else="!false">新用户</el-tag>
+        <el-tag type="error" v-else="false">新用户</el-tag>
       </el-descriptions-item>
     </el-descriptions>
     <el-tabs v-model="des" @tab-click="handleClick">
@@ -38,35 +38,29 @@
   </div>
 </template>
 
-
-
-
 <script setup>
 import One from '@/components/Details/One.vue';
 import Two from '@/components/Details/Two.vue';
 import Three from '@/components/Details/Three.vue';
 import Four from '@/components/Details/Four.vue';
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import { getInfoById } from '@/api/customer'
 const router = useRoute()
 //详情客户id
 const id = router.params.id
+//客户信息
+const data = reactive({})
+function getInfo() {
+  getInfoById(id).then((res) => {
+    if (res.code == 200) {
+      for (var i in res.data) {
+        data[i] = res.data[i]
+      }
+    }
+  })
+}
 
-/**
- * 描述列表
- */
-//模拟详情客户信息
-const data = reactive(
-  {
-    id: 'KH000001',
-    name: '花二头',
-    age: '20-',
-    phone: '14521452145',
-    email: '145214521@qq.com',
-    company: 'xxx有限公司',
-    info: ['经理', '性格好', '大客户']
-  },
-)
 /**
  * 标签
  */
@@ -96,6 +90,10 @@ const handleClick = (tab) => {
 const changeTab = () => {
   des.value = 0
 }
+
+onMounted(() => {
+  getInfo()
+})
 </script>
 
 <style scoped></style>

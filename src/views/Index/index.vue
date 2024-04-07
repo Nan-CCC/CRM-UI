@@ -1,8 +1,8 @@
 <template>
   <div style="overflow:hidden;">
     <div class="base bor info fs18">
-      <p>欢迎回来，<span>叶翘</span></p>
-      <p>您目前所属：<span>市场部</span></p>
+      <p>欢迎回来，<span>{{ userInfo.name }}</span></p>
+      <p>您目前所属：<span>{{ userInfo.department }}</span></p>
       <p>{{ state.date.toLocaleString() }}</p>
     </div>
 
@@ -41,7 +41,7 @@
     </div>
     <div class="base bor plan">
       <div>
-        <div v-if="!true" class="none">
+        <div v-if="true" class="none">
           今日暂无日程
         </div>
         <div v-else class="exist">
@@ -88,8 +88,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-
-const flag = ref(false)
+import { getUserInfoByToken } from '@/api/user'
 /**
  * 日程安排
  */
@@ -131,8 +130,17 @@ const updateTime = () => {
   state.date = new Date();
 };
 
+const userInfo = ref({})
+function getUser() {
+  let token = JSON.parse(sessionStorage.getItem('user')).userInfo
+  getUserInfoByToken(token).then((res) => {
+    userInfo.value = res.data
+  })
+}
+
 onMounted(() => {
   setInterval(updateTime, 1000);
+  getUser()
 });
 
 const tableData = [
@@ -201,6 +209,8 @@ const tableData = [
     time: '2021-03-08 9:45:48'
   },
 ]
+
+
 </script>
 
 <style scoped lang="scss">

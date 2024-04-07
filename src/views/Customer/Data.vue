@@ -22,7 +22,8 @@
         <el-input v-model="searchForm.company" clearable />
       </el-form-item>
       <el-form-item label="备注" style="margin-left: 28px;">
-        <el-tag v-for="tag in searchForm.info" :key="tag" closable :disable-transitions="false"
+        <el-input v-model="searchForm.info" clearable />
+        <!-- <el-tag v-for="tag in searchForm.info" :key="tag" closable :disable-transitions="false"
           @close="handleClose(tag)" type="primary" size="large" class="tag">
           {{ tag }}
         </el-tag>
@@ -30,7 +31,7 @@
           style="width: 100px;" />
         <el-button v-else class="button-new-tag" @click="showInput">
           + New Tag
-        </el-button>
+        </el-button> -->
       </el-form-item>
       <el-form-item style="float: right;margin-right: 35px;">
         <div v-if="change">
@@ -45,7 +46,7 @@
           <el-button @click="cancel">
             <span>取消修改</span>
           </el-button>
-          <el-button type="primary">
+          <el-button type="primary" @click="update(rulesRef)">
             <el-icon size="18">
               <Loading />
             </el-icon>
@@ -72,30 +73,36 @@
       <el-table-column prop="phone" label="手机号码" width="180" />
       <el-table-column prop="email" label="电子邮箱" width="200" />
       <el-table-column prop="company" label="所属公司" width="200" show-overflow-tooltip />
-      <el-table-column label="备注">
+      <el-table-column prop="info" label="备注" show-overflow-tooltip />
+      <!-- <el-table-column label="备注">
         <template #default="scope">
           <el-tag type="primary" v-for=" item  in  scope.row.info " class="mr10">{{ item }}</el-tag>
         </template>
-      </el-table-column>
-      <el-table-column label="详情" width="100">
+</el-table-column> -->
+      <el-table-column label="详情" width="190">
         <template #default="props">
           <el-button type="warning" size="small" @click="toDetail(props.row.id)">
             查看详情
           </el-button>
+          <el-button type="primary" size="small" @click="toPublic(props.row.id)">
+            转到公海
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination class="mt10 flex-center" :page-size="20" :pager-count="11" layout="prev, pager, next"
-      :total="1000" />
+    <el-pagination class="mt10 flex-center" @change="getNewList" :page-size="10" :pager-count="11"
+      layout="prev, pager, next" :total="total" />
   </div>
 </template>
 
 <script setup>
 import { ElInput } from 'element-plus'
 import { ElMessage } from 'element-plus'
-import { ref, reactive, nextTick } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { isPhone } from '@/utils/validator.js'
-import { useRouter, useRoute } from "vue-router"
+import { useRouter } from "vue-router"
+import { getCustomer, addCustomer, updateCustomer, updateOwner } from '@/api/customer'
+import { getUserInfoByToken } from '@/api/user'
 /**
  * 表单
  */
@@ -107,7 +114,8 @@ const searchForm = reactive({
   company: '',
   phone: '',
   email: '',
-  info: []
+  info: '',
+  uid: ''
 })
 //表单名称
 const rulesRef = ref()
@@ -193,15 +201,51 @@ const add = (val) => {
   val.validate((valid) => {
     //valid==true校验通过
     if (valid) {
-      ElMessage({
-        type: 'success',
-        message: '添加成功'
+      let costomer = {}
+      for (var i in searchForm) {
+        costomer[i] = searchForm[i]
+      }
+      addCustomer(costomer).then((res) => {
+        if (res.code == 200) {
+          ElMessage({
+            type: 'success',
+            message: '添加成功'
+          })
+          getTableData()
+        }
       })
       //清空对象
       for (var i in searchForm) {
         searchForm[i] = null
       }
+    }
+  })
+}
 
+/**
+ * 修改客户
+ */
+const update = (val) => {
+  val.validate((valid) => {
+    //valid==true校验通过
+    if (valid) {
+      let costomer = {}
+      for (var i in searchForm) {
+        costomer[i] = searchForm[i]
+      }
+      updateCustomer(costomer).then((res) => {
+        if (res.code == 200) {
+          ElMessage({
+            type: 'success',
+            message: '修改成功'
+          })
+          getTableData()
+        }
+      })
+      //清空对象
+      for (var i in searchForm) {
+        searchForm[i] = null
+      }
     }
   })
 }
@@ -249,97 +293,30 @@ const search = ref('')
 /**
  * 表格
  */
+//分页总数
+const total = ref()
 //表格数据
-const tableData = [
-  {
-    id: 'KH000001',
-    name: '花大头',
-    age: '20-',
-    phone: '14521452145',
-    email: '145214521@qq.com',
-    company: 'xxx有限公司',
-    info: ['经理', '性格好', '大客户']
-  },
-  {
-    id: 'KH000002',
-    name: '花二头',
-    age: '20-30',
-    phone: '14521452145',
-    email: '145214521@qq.com',
-    company: 'xxx有限公司xxx有限公司xxx有限公司xxx有限公司',
-    info: ['经理', '性格好', '大客户']
-  },
-  {
-    id: 'KH000003',
-    name: '花大头',
-    age: '60+',
-    phone: '14521452145',
-    email: '145214521@qq.com',
-    company: 'xxx有限公司',
-    info: ['经理', '性格好', '大客户']
-  },
-  {
-    id: 'KH000004',
-    name: '花二头',
-    age: '20-',
-    phone: '14521452145',
-    email: '145214521@qq.com',
-    company: 'xxx有限公司',
-    info: ['经理', '性格好', '大客户']
-  }, {
-    id: 'KH000005',
-    name: '花大头',
-    age: '20-',
-    phone: '14521452145',
-    email: '145214521@qq.com',
-    company: 'xxx有限公司',
-    info: ['经理', '性格好', '大客户']
-  },
-  {
-    id: 'KH000006',
-    name: '花二头',
-    age: '20-',
-    phone: '14521452145',
-    email: '145214521@qq.com',
-    company: 'xxx有限公司',
-    info: ['经理', '性格好', '大客户']
-  }, {
-    id: 'KH000007',
-    name: '花大头',
-    age: '20-',
-    phone: '14521452145',
-    email: '145214521@qq.com',
-    company: 'xxx有限公司',
-    info: ['经理', '性格好', '大客户']
-  },
-  {
-    id: 'KH000008',
-    name: '花二头',
-    age: '20-',
-    phone: '14521452145',
-    email: '145214521@qq.com',
-    company: 'xxx有限公司',
-    info: ['经理', '性格好', '大客户']
-  }, {
-    id: 'KH000009',
-    name: '花大头',
-    age: '20-',
-    phone: '14521452145',
-    email: '145214521@qq.com',
-    company: 'xxx有限公司',
-    info: ['经理', '性格好', '大客户']
-  },
-  {
-    id: 'KH000001',
-    name: '花二头',
-    age: '20-',
-    phone: '14521452145',
-    email: '145214521@qq.com',
-    company: 'xxx有限公司',
-    info: ['经理', '性格好', '大客户']
-  },
-
-]
+const tableData = ref([])
+function getTableData() {
+  let token = JSON.parse(sessionStorage.getItem('user')).userInfo
+  getUserInfoByToken(token).then((res) => {
+    if (res.code == 200) {
+      searchForm.uid = res.data.id
+      getCustomer(1, 10, res.data.id).then((res) => {
+        total.value = res.data.total
+        tableData.value = res.data.records
+      })
+    }
+  })
+}
+//分页
+function getNewList(page, size) {
+  let uid = searchForm.uid
+  getCustomer(page, 10, uid).then((res) => {
+    let userList = res.data.records
+    tableData.value = userList
+  })
+}
 // //根据数组值找下表（表格中年龄显示）
 // const switchAge = (val) => {
 //   var x = age.map(item => item.value).indexOf('20-')
@@ -364,6 +341,21 @@ const toDetail = (val) => {
     }
   })
 }
+//转到公海
+function toPublic(val) {
+  let cid = val
+  let uid = ""
+  updateOwner(cid, uid).then((res) => {
+    if (res.code == 200) {
+      getTableData()
+    }
+  })
+}
+
+
+onMounted(() => {
+  getTableData()
+})
 </script>
 
 <style scoped lang="scss">
