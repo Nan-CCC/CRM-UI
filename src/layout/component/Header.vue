@@ -3,13 +3,12 @@
     <el-row class="box">
       <el-col :span="21" style="line-height: 40px;">
         <span v-for="(i, index) in breadList" class="title">
-          <span>{{ i.meta.name }}</span>
+          <span>{{ i }}</span>
           <span v-if="index < breadList.length - 1">></span>
-          <router-link v-if="i.meta.name == '客户详情'" to="/data" class="return">返回</router-link>
         </span>
       </el-col>
       <el-col :span="1">
-        <el-icon size="20" class="icon" @click="change2">
+        <el-icon size="20" class="icon" @click="change">
           <div class="tip" v-if="flag2 == true"></div>
           <BellFilled />
         </el-icon>
@@ -30,87 +29,67 @@
         </el-tooltip>
       </el-col>
     </el-row>
-
   </div>
-
 </template>
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import { useRoute } from "vue-router"
-import { getUserInfoByToken } from "@/api/user"
-let route = useRoute();
-const breadList = ref('')
-let getMatched = () => {
-  breadList.value = route.matched.filter(item => item.meta && item.meta.name);
-}
+import { useRoute, useRouter } from "vue-router"
+import { useUserStore } from '@/store/user'
+import { resetRouter } from '@/router/router'
 
+let route = useRoute();
+const router = useRouter()
+const breadList = ref([])
+function getMatched() {
+  //判断数组中指定元素为空，此处的元素item.meta是对象，所以要判断对象为空
+  let menuList = route.matched.filter(item => Object.keys(item.meta).length !== 0);
+  menuList.forEach(item => {
+    breadList.value.push(item.meta.title)
+  })
+}
+//渲染后加载
 onMounted(() => {
   getMatched();
 })
-watch(() => route.path, (newValue, oldValue) => { //监听路由路径是否发生变化，之后更改面包屑
-  breadList.value = route.matched.filter(item => item.meta && item.meta.name);
+
+//监听路由路径是否发生变化，之后更改面包屑
+watch(() => route.path, (newValue, oldValue) => {
+  breadList.value = []
+  getMatched()
 })
 
 //通知的角标显示
 const flag2 = ref(false)
-function change2() {
+function change() {
   flag2.value = !flag2.value
 }
-//头像弹出框
-const visible = ref(false)
 
+//头像弹出框（退出登录）
+const visible = ref(false)
+const userStore = useUserStore()
 function exit() {
-  console.log("退退退");
+  //用户信息清空
+  userStore.clearUserInfo()
+  //session清空
+  sessionStorage.clear()
+  resetRouter(router)
+  router.push('/login');
 }
 </script>
 
 <style scoped lang="scss">
-.flex-grow {
-  flex-grow: 1;
-}
-
 .box {
-  margin: 8px -10px;
-  color: $header-color;
-  height: 35px;
+  margin-top: 8px;
 
   .icon {
-    margin: 5px;
-    padding: 5px;
-    cursor: pointer;
-  }
-
-  .tip {
-    width: 10px;
-    height: 10px;
-    background-color: red;
-    border-radius: 10px;
-    position: absolute;
-    margin-bottom: 13px;
-    margin-left: 15px;
-    // right: 183px;
-    // z-index: 1;
-  }
-
-  span {
-    span {
-      margin-right: 10px;
-    }
+    color: $header-color;
+    margin-top: 10px;
   }
 }
 
 .title {
+  color: $menu-color;
   font-size: 14px;
-
-  .return {
-    color: $header-color ;
-    text-decoration: none;
-
-  }
-
-  .return:active {
-    color: $text-color;
-  }
 }
 
 .el-avatar {

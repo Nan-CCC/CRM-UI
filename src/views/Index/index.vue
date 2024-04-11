@@ -1,9 +1,9 @@
 <template>
   <div style="overflow:hidden;">
     <div class="base bor info fs18">
-      <p>欢迎回来，<span>{{ userInfo.name }}</span></p>
+      <!-- <p>欢迎回来，<span>{{ userInfo.name }}</span></p>
       <p>您目前所属：<span>{{ userInfo.department }}</span></p>
-      <p>{{ state.date.toLocaleString() }}</p>
+      <p>{{ state.date.toLocaleString() }}</p> -->
     </div>
 
     <div class="base bor calendar">
@@ -87,8 +87,9 @@
 </template>
 
 <script setup>
+import router from '@/router';
 import { ref, reactive, onMounted } from 'vue'
-import { getUserInfoByToken } from '@/api/user'
+// import { getUserInfoByToken } from '@/api/user'
 /**
  * 日程安排
  */
@@ -130,18 +131,18 @@ const updateTime = () => {
   state.date = new Date();
 };
 
-const userInfo = ref({})
-function getUser() {
-  let token = JSON.parse(sessionStorage.getItem('user')).userInfo
-  getUserInfoByToken(token).then((res) => {
-    userInfo.value = res.data
-  })
-}
+// const userInfo = ref({})
+// function getUser() {
+//   let token = JSON.parse(sessionStorage.getItem('user')).userInfo
+//   getUserInfoByToken(token).then((res) => {
+//     userInfo.value = res.data
+//   })
+// }
 
-onMounted(() => {
-  setInterval(updateTime, 1000);
-  getUser()
-});
+// onMounted(() => {
+//   setInterval(updateTime, 1000);
+//   getUser()
+// });
 
 const tableData = [
   {
@@ -210,7 +211,11 @@ const tableData = [
   },
 ]
 
+onMounted(() => {
 
+
+  console.log('这里index');
+})
 </script>
 
 <style scoped lang="scss">

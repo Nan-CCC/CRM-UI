@@ -1,8 +1,8 @@
 //二次封装axios
 import axios from "axios";
-import { useUserStore } from "@/store/user";
-import { getError } from '@/utils/tips';
-import router from "@/router";
+import { getWarning, getError } from '@/utils/tips';
+import { useRouter, useRoute } from "vue-router";
+
 //创建axios实例
 const service = axios.create({
   //vue.config.js
@@ -13,21 +13,18 @@ const service = axios.create({
 //请求拦截器
 service.interceptors.request.use(
   config => {
-
     console.log('-----正确请求拦截器------')
-
-    const userStore = useUserStore()
-
-    if (userStore.userInfo.data) {
-      //加入token信息
-      const token = userStore.userInfo.data
-      config.headers.Authorization = `Bearer ${token}`
+    let token = sessionStorage.getItem('token')
+    if (token) {
+      config.headers.Authorization = token
     }
+    //console.log(config.headers)
     return config;
   },
   //错误信息处理
   error => {
     console.log('-----错误请求拦截器------')
+    console.log(error);
     return Promise.reject(error)
   })
 
@@ -35,21 +32,19 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     console.log('-----正确响应拦截器------')
-    return response.data
+    if (response.data.code == '401') {
+      getWarning(response.data.msg)
+      return response.data
+    }
+    else if (response.data.code == '400') {
+      getError(response.data.msg)
+    }
+    else if (response.data.code == '200') {
+      return response.data
+    }
   },
   error => {
-    console.log('-----错误响应请求拦截器------')
-    const userStore = useUserStore()
-
-    //console.log(error);
-    getError(error.response.data.msg)
-    //console.log(error.response)
-    //清除本地用户数据
-    //跳转到登录
-    if (error.response.status === 401) {
-      userStore.clearUserInfo()
-      router.push('/login')
-    }
+    console.log('-----错误响应拦截器------')
     return Promise.reject(error)
   }
 )

@@ -34,8 +34,8 @@
 
 <script setup>
 import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router"
 import { useUserStore } from '@/store/user'
+import router from "@/router";
 
 const loginForm = ref({
   user: '',
@@ -50,15 +50,8 @@ function changeSrc() {
 
 const userStore = useUserStore()
 
-const router = useRouter()
-
 function toIndex() {
   userStore.getUserInfo(loginForm.value)
-  //var user = sessionStorage.getItem("user")
-  // userStore.userInfo.then((res) => {
-  //   console.log(res);
-  // })
-
 }
 
 </script>

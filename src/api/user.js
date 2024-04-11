@@ -1,11 +1,15 @@
 import request from '@/utils/request'
 
-export function getUserInfoByToken(data) {
+export function isToken() {
+  return request({
+    method: 'get',
+    url: '/user/verify',
+  })
+}
+
+export async function getUserInfoByToken() {
   return request({
     method: 'get',
     url: '/user/queryuser',
-    headers: {
-      Authorization: data
-    },
   })
 }

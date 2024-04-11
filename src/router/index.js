@@ -1,53 +1,66 @@
-import { createRouter, createWebHashHistory } from "vue-router";
-import customer from './module/customer';
-import first from "./module/first";
-import sale from "./module/sale";
-import market from './module/market';
-import service from './module/service'
-import { getError, getSuccess } from "@/utils/tips";
-// 创建路由器router
+import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
+import { initRouter, createNow } from '@/router/router';
+import { isToken } from "@/api/user";
+import { routes } from './static'
+import { getError } from '@/utils/tips'
+/**
+ * 本系统跳转逻辑：
+ *  根目录是layout框架
+ *  路由守卫 无token跳转到/login
+ *  
+ *  根目录不能重定向到/index  这样设置登录会有404，刷新才能正常显示，很迷
+ *  目前解决方法是在Menu中设置 路径为 / 时跳转到 /index
+ */
+
+//创建
 const router = createRouter({
-  history: createWebHashHistory(), //hash模式
-  routes: [
-    {
-      path: '/',
-      redirect: '/login',
-    },
-    {
-      path: '/login',
-      name: 'Login',
-      hidden: true,
-      component: () => import('@/views/Login/index.vue')
-    },
-    {
-      path: '/:path(.*)',
-      component: () => import('../views/Common/NotFound.vue')
-    },
-    ...first,
-    ...customer,
-    ...sale,
-    ...market,
-    ...service
-  ]
+  history: createWebHashHistory(),
+  routes: routes
 })
 
-router.beforeEach(async (to, from) => {
-  var user = sessionStorage.getItem("user")
-  var userInfo = JSON.parse(user)
+//在这里添加，刷新不会消失
+console.log('router里的add');
+let menu = sessionStorage.getItem('menu')
+if (menu) {
+  let menuInfo = JSON.parse(menu).menuInfo
+  const routers = initRouter(menuInfo);
+  routers.forEach(item => {
+    router.addRoute('Home', item)
+  })
+}
 
-  if (userInfo !== null) {
-    if (
-      // 检查用户是否已登录 token
-      userInfo.userInfo === null &&
-      // 避免无限重定向
-      to.name !== 'Login'
-    ) {
-      getError('无token,请登录')
-      // 将用户重定向到登录页面
+//守卫
+router.beforeEach(async (to, from) => {
+  let nowPath = to.fullPath
+  let oldPath = from.fullPath
+  if (nowPath != "/login") {
+    var token = sessionStorage.getItem("token")
+    if (!token) {
+      getError("无token,请登录")
       return { name: 'Login' }
     }
+    else {
+      //警告从request.js中发出
+      let res = await isToken(token)
+      //token过期
+      if (res.code == 401) {
+        return { name: 'Login' }
+      }
+    }
+    //createNow(router)
   }
-
+  //从登录->首页，加载动态路由
+  console.log(oldPath + '->' + nowPath);
+  if (oldPath == '/login' && nowPath == '/') {
+    let menu = sessionStorage.getItem('menu')
+    if (menu) {
+      let menuInfo = JSON.parse(menu).menuInfo
+      const routers = initRouter(menuInfo);
+      routers.forEach(item => {
+        router.addRoute('Home', item)
+      })
+    }
+  }
 })
 
 export default router

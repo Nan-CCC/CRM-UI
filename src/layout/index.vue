@@ -1,7 +1,7 @@
 <template>
   <div class="common-layout">
     <el-container>
-      <el-aside width="225px" style="box-shadow: 1px 1px 10px #888;z-index: 1;">
+      <el-aside width="225px" style="box-shadow: 1px 1px 10px #888;z-index: 1;background-color: #466c23;">
         <Menu></Menu>
       </el-aside>
       <el-container>
@@ -10,7 +10,7 @@
         </el-header>
         <el-scrollbar class="main">
           <el-main>
-            <router-view />
+            <router-view></router-view>
             <p class="footer">enterprisecrm@2024-01-01</p>
           </el-main>
         </el-scrollbar>
@@ -20,8 +20,8 @@
 </template>
 
 <script setup>
-import Menu from "@/components/Menu/Menu.vue";
-import Header from "@/components/Menu/Header.vue";
+import Menu from "./component/Menu.vue";
+import Header from "./component/Header.vue";
 </script>
 
 <style lang="scss">
