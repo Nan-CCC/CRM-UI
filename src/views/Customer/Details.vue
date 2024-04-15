@@ -45,7 +45,7 @@ import Three from '@/components/Details/Three.vue';
 import Four from '@/components/Details/Four.vue';
 import { ref, reactive, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { getInfoById } from '@/api/customer'
+import { getInfoById } from '@/api/modules/customer'
 const router = useRoute()
 //详情客户id
 const id = router.params.id
@@ -96,4 +96,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped></style>
+<style scoped></style>@/api/modules/customer

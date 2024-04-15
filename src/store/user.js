@@ -4,7 +4,7 @@ import { getError, getSuccess } from "@/utils/tips";
 import { useRouter } from 'vue-router';
 // 导入请求登录的接口
 import { loginAPI } from "@/api/login";
-import { getUserInfoByToken } from "@/api/user"
+import { getUserInfoByToken } from "@/api/modules/user";
 import { useMenuStore } from "@/store/menu"
 
 export const useUserStore = defineStore('user', () => {

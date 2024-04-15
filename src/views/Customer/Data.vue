@@ -101,8 +101,8 @@ import { ElMessage } from 'element-plus'
 import { ref, reactive, onMounted } from 'vue'
 import { isPhone } from '@/utils/validator.js'
 import { useRouter } from "vue-router"
-import { getCustomer, addCustomer, updateCustomer, updateOwner } from '@/api/customer'
-import { getUserInfoByToken } from '@/api/user'
+import { getCustomer, addCustomer, updateCustomer, updateOwner } from '@/api/modules/customer'
+import { getUserInfoByToken } from '@/api/modules/user'
 /**
  * 表单
  */
@@ -375,4 +375,4 @@ onMounted(() => {
   border-top: 1px $plan-color solid;
   padding: 10px 0px;
 }
-</style>
+</style>@/api/modules/customer

@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
 import { initRouter, createNow } from '@/router/router';
-import { isToken } from "@/api/user";
+import { isToken } from "@/api/modules/user";
 import { routes } from './static'
 import { getError } from '@/utils/tips'
 /**
@@ -19,7 +19,6 @@ const router = createRouter({
 })
 
 //在这里添加，刷新不会消失
-console.log('router里的add');
 let menu = sessionStorage.getItem('menu')
 if (menu) {
   let menuInfo = JSON.parse(menu).menuInfo
@@ -50,7 +49,6 @@ router.beforeEach(async (to, from) => {
     //createNow(router)
   }
   //从登录->首页，加载动态路由
-  console.log(oldPath + '->' + nowPath);
   if (oldPath == '/login' && nowPath == '/') {
     let menu = sessionStorage.getItem('menu')
     if (menu) {

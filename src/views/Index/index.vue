@@ -1,11 +1,12 @@
 <template>
   <div style="overflow:hidden;">
+    <!-- 当前员工信息 -->
     <div class="base bor info fs18">
-      <!-- <p>欢迎回来，<span>{{ userInfo.name }}</span></p>
+      <p>欢迎回来，<span>{{ userInfo.name }}</span></p>
       <p>您目前所属：<span>{{ userInfo.department }}</span></p>
-      <p>{{ state.date.toLocaleString() }}</p> -->
+      <p>{{ state.date.toLocaleString() }}</p>
     </div>
-
+    <!-- 日历 -->
     <div class="base bor calendar">
       <el-calendar ref="calendar" class="mt10">
         <template #header="{ date }">
@@ -29,8 +30,9 @@
         <template #date-cell="{ data }">
           <div :class="data.isSelected ? 'is-selected' : ''" @dblclick="addPlan(data.day)" class="con">
             {{ data.day.split('-').slice(2).join('-') }}
-            <div class="mt10 mark" v-if="planDate.includes(data.day)">
-              <el-icon size="20">
+            <div class="mt10" v-if="scheduleListDate.map(item => item.date).includes(data.day)">
+              <el-icon size="20"
+                :style="scheduleListDate.find(item => item.date == data.day).status ? 'color:#5e902f' : 'color:#e6a23c'">
                 <StarFilled />
               </el-icon>
             </div>
@@ -38,18 +40,36 @@
 
         </template>
       </el-calendar>
+      <div>
+        <div class="cfoot">
+          <el-icon size="20" class="cicon" style="color:#5e902f;">
+            <StarFilled />
+          </el-icon>
+          <span>----已完成</span>
+        </div>
+        <div class="cfoot">
+          <el-icon size="20" class="cicon">
+            <StarFilled />
+          </el-icon>
+          <span>---未完成</span>
+        </div>
+      </div>
     </div>
+    <!-- 日程 -->
     <div class="base bor plan">
       <div>
-        <div v-if="true" class="none">
+        <div v-if="!todaySchedule.content" class="none">
           今日暂无日程
         </div>
         <div v-else class="exist">
           <div class="title fs20">
-            今日日程安排
+            <span style="padding-right: 70%;">今日日程安排</span>
+            <el-button v-if="!flag" :icon="Document" circle type="warning" plain size="small"
+              @click="updateTodayStatus(1)" />
+            <el-button v-else :icon="Check" circle size="small" @click="updateTodayStatus(0)" />
           </div>
           <div class="content fs16">
-            {{ planData }}
+            {{ todaySchedule.content }}
           </div>
         </div>
       </div>
@@ -57,8 +77,8 @@
     </div>
     <div class="base bor notice">
       <div class="title fs20">通知</div>
-      <el-table :data="tableData" height="355">
-        <el-table-column prop="info" lable="11" />
+      <el-table height="355">
+        <el-table-column prop="info" />
         <el-table-column prop="time" width="200px" />
       </el-table>
     </div>
@@ -66,19 +86,18 @@
   <el-dialog v-model="visable" width="500">
     <template #header>
       <div class="dialog-title mb10 fs20">
-        {{ clickDate }}- 添加日程
+        {{ schedule.date }}- {{ title }}
       </div>
     </template>
-
     <el-form-item>
-      <el-input class="fs16" v-model="planData" maxlength="90" placeholder="请输入日程安排..." show-word-limit autosize
+      <el-input class="fs16" v-model="schedule.content" maxlength="90" placeholder="请输入日程安排..." show-word-limit autosize
         type="textarea" />
     </el-form-item>
 
     <template #footer>
       <div>
         <el-button @click="visable = false">取消</el-button>
-        <el-button type="primary" @click="visable = false">
+        <el-button type="primary" @click="save">
           保存
         </el-button>
       </div>
@@ -87,41 +106,17 @@
 </template>
 
 <script setup>
-import router from '@/router';
 import { ref, reactive, onMounted } from 'vue'
-// import { getUserInfoByToken } from '@/api/user'
+import { useUserStore } from '@/store/user';
+import { addSchedule, getOneDay, queryAllSchedule, updateOneDay, daleteOneDay, updateStatus } from '@/api/modules/schedule'
+import { Check, Document } from '@element-plus/icons-vue';
 /**
- * 日程安排
+ * 获取用户信息
  */
-//备注内容限90个字
-const planData =
-  ref('今天要啦啦哦哦哦哦哦今天要啦啦哦哦哦哦哦今天要啦啦哦哦哦哦哦今天要啦啦哦哦哦哦哦今天要啦啦哦哦哦哦哦今天要啦啦哦哦哦哦哦今天要啦啦哦哦哦哦哦今天要啦啦哦哦哦哦哦今天要啦啦哦哦哦哦哦')
-
-/**
- * 日历
- */
-
-//日历 日期前后移动
-const calendar = ref(null)
-const selectDate = (val) => {
-  if (!calendar.value) return
-  calendar.value.selectDate(val)
-}
-//标记有备注的日期
-const planDate = ref(['2024-03-05', '2024-03-07', '2024-04-16'])
-//备注弹窗
-const visable = ref(false)
-//当前日期
-const clickDate = ref('')
-//点击日历时间
-const addPlan = (val) => {
-  clickDate.value = val;
-  visable.value = true;
-}
-
-/**
- * 时间显示
- */
+const userInfo = ref()
+const userStore = useUserStore()
+userInfo.value = userStore.userInfo
+//当前时间
 const state = reactive({
   date: new Date()
 })
@@ -131,91 +126,110 @@ const updateTime = () => {
   state.date = new Date();
 };
 
-// const userInfo = ref({})
-// function getUser() {
-//   let token = JSON.parse(sessionStorage.getItem('user')).userInfo
-//   getUserInfoByToken(token).then((res) => {
-//     userInfo.value = res.data
-//   })
-// }
 
-// onMounted(() => {
-//   setInterval(updateTime, 1000);
-//   getUser()
-// });
+/**
+ * 日历
+ */
+//日历 日期前后移动
+const calendar = ref(null)
+const selectDate = (val) => {
+  if (!calendar.value) return
+  calendar.value.selectDate(val)
+}
 
-const tableData = [
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-  {
-    info: 'xxxx增加了一条客户数据',
-    time: '2021-03-08 9:45:48'
-  },
-]
+/**
+ * 日程安排
+ */
+//今天日期
+let dayjs = require('dayjs')
+let today = dayjs().format('YYYY-MM-DD')
+//新增内容
+const schedule = reactive({
+  user: '',
+  content: '',
+  date: ''
+})
+
+//获取当前用户今天的日程
+//状态flag
+const flag = ref()
+const todaySchedule = ref({})
+async function getTodaySchedule() {
+  const { data } = await getOneDay(userInfo.value.id, today)
+  if (data) {
+    todaySchedule.value = data
+    flag.value = data.status
+  }
+  else {
+    todaySchedule.value = {}
+  }
+
+}
+
+//修改今日计划状态
+async function updateTodayStatus(val) {
+  await updateStatus(todaySchedule.value.id, val)
+  flag.value = val
+  await getAllSchedule()
+}
+
+//全部日程日期
+const scheduleListDate = ref([])
+async function getAllSchedule() {
+  const { data } = await queryAllSchedule(userInfo.value.id)
+  scheduleListDate.value = data
+}
+
+//点击日历时间
+//新增/修改弹窗
+const visable = ref(false)
+//弹窗标题
+const title = ref('')
+const addPlan = async (val) => {
+  if (scheduleListDate.value.map(item => item.date).includes(val)) {
+    title.value = '修改日程'
+    const { data } = await getOneDay(userInfo.value.id, val)
+    schedule.content = data.content
+  }
+  else {
+    title.value = '新增日程'
+    schedule.content = ''
+  }
+  schedule.user = userInfo.value.id
+  schedule.date = val;
+
+  visable.value = true;
+}
+
+async function save() {
+  visable.value = false
+  if (schedule.content) {
+    if (title.value == '新增日程') {
+      await addSchedule(schedule)
+    }
+    else {
+      await updateOneDay(userInfo.value.id, schedule.date, schedule.content)
+    }
+  } else {
+    const { data } = await getOneDay(userInfo.value.id, schedule.date)
+    if (data.content) {
+      await daleteOneDay(userInfo.value.id, schedule.date)
+    }
+  }
+  if (schedule.date == today) {
+    await getTodaySchedule()
+  }
+
+  //刷新日期列表
+  await getAllSchedule()
+
+}
 
 onMounted(() => {
-
-
-  console.log('这里index');
-})
+  setInterval(updateTime, 1000);
+  getTodaySchedule()
+  getAllSchedule()
+});
 </script>
 
 <style scoped lang="scss">
@@ -240,16 +254,24 @@ onMounted(() => {
 
 .calendar {
   width: 50%;
-  height: 670px;
+  height: 640px;
   float: left;
-
-  .mark {
-    color: $hr-color;
-  }
 
   .con {
     height: 70px;
     text-align: center;
+  }
+
+  .cfoot {
+    float: right;
+    color: #aaa;
+    margin-right: 20px;
+
+    .cicon {
+      color: #e6a23c;
+      position: relative;
+      top: 4px;
+    }
   }
 }
 
@@ -257,7 +279,7 @@ onMounted(() => {
   width: 46%;
   height: 200px;
   float: left;
-  margin-top: -520px;
+  margin-top: -490px;
 
   .none {
     text-align: center;
@@ -268,17 +290,18 @@ onMounted(() => {
   }
 
   .exist {
+    background-color: #e3f0d8;
+
     .title {
       padding: 20px;
       font-weight: 100;
       color: $header-color;
-      background-color: #e3f0d8;
       border-bottom: 1px rgb(200, 200, 200) solid;
     }
 
     .content {
-      height: 92px;
-      background-color: #e3f0d8;
+      height: 95px;
+
       padding: 20px;
       color: rgb(118, 102, 83);
       line-height: 30px;
@@ -292,7 +315,7 @@ onMounted(() => {
   width: 46%;
   height: 400px;
   float: left;
-  margin-top: -305px;
+  margin-top: -275px;
 
   .title {
     margin-top: 20px;
