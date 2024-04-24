@@ -14,6 +14,9 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     console.log('-----正确请求拦截器------')
+    if (!config.data) {
+      config.data = true // 解决请求没有参数时添加不上Content-Type问题
+    }
     let token = sessionStorage.getItem('token')
     if (token) {
       config.headers.Authorization = token
@@ -42,9 +45,14 @@ service.interceptors.response.use(
     else if (response.data.code == '200') {
       return response.data
     }
+
   },
   error => {
     console.log('-----错误响应拦截器------')
+    console.log(error.message);
+    getError(error.message)
+    //return Promise.resolve(error.response)
+    //这种会出报错页面
     return Promise.reject(error)
   }
 )

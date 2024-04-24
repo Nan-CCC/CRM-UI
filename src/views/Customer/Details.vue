@@ -1,10 +1,11 @@
 <template>
-  <div style="background-color: #fff;" class="m15">
+  <div style="background-color: #fff;" class="m15 bor ">
     <el-descriptions border>
       <el-descriptions-item label="客户编号">{{ data.id }}</el-descriptions-item>
       <el-descriptions-item label="客户姓名">{{ data.name }}</el-descriptions-item>
       <el-descriptions-item label="客户年龄">
-        <el-tag type="warning">{{ data.age }}</el-tag>
+        <el-tag type="warning">{{ age.map(item => item.label)[age.map(item => item.value).indexOf(data.age)]
+          }}</el-tag>
       </el-descriptions-item>
       <el-descriptions-item label="手机号码">
         {{ data.phone }}
@@ -12,7 +13,7 @@
       <el-descriptions-item label="电子邮箱">{{ data.email }}</el-descriptions-item>
       <el-descriptions-item label="所属公司">{{ data.company }}</el-descriptions-item>
       <el-descriptions-item label="备注" span="2">
-        <el-tag v-for="item in data.info" class="mr10" type="warning">{{ item }}</el-tag>
+        {{ data.info }}
       </el-descriptions-item>
       <el-descriptions-item label="评级">
         <el-tag type="primary" v-if="!false">老客户</el-tag>
@@ -51,6 +52,33 @@ const router = useRoute()
 const id = router.params.id
 //客户信息
 const data = reactive({})
+//年龄格式
+const age = [
+  {
+    value: '20-',
+    label: '20岁以下'
+  },
+  {
+    value: '20-30',
+    label: '20岁-30岁'
+  },
+  {
+    value: '30-40',
+    label: '30岁-40岁'
+  },
+  {
+    value: '40-50',
+    label: '40岁-50岁'
+  },
+  {
+    value: '50-60',
+    label: '50岁-60岁'
+  },
+  {
+    value: '60+',
+    label: '60岁以上'
+  },
+]
 function getInfo() {
   getInfoById(id).then((res) => {
     if (res.code == 200) {

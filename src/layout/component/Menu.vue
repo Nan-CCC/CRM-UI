@@ -34,7 +34,6 @@
 import { ref, onMounted, } from 'vue'
 import { useRoute, useRouter } from "vue-router"
 import { useMenuStore } from '@/store/menu'
-import { createNow } from '@/router/router'
 
 const menuInfo = ref()
 //获取数据库菜单信息
@@ -53,7 +52,7 @@ if (route.fullPath == '/') {
 
 //动态激活菜单
 //本次是以路径为index
-const acticeIndex = ref('')
+const acticeIndex = ref('/index')
 //修改激活
 function getNow(index) {
   acticeIndex.value = index
@@ -62,6 +61,7 @@ onMounted(() => {
   getMenu()
   //渲染时根据当前路由
   acticeIndex.value = route.fullPath
+
 })
 
 </script>

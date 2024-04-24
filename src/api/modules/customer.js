@@ -1,24 +1,14 @@
 import request from '@/utils/request'
-//获取公海
-export function getPublicCustomer(page, size) {
-  return request({
-    method: 'post',
-    url: '/customer/queryallpublic',
-    params: {
-      c: page,
-      size: size
-    }
-  })
-}
+
 //获取客户
-export function getCustomer(page, size, id) {
+export function getCustomer(page, size, uid) {
   return request({
     method: 'post',
-    url: '/customer/queryalluser',
+    url: '/customer/queryall',
     params: {
       c: page,
       size: size,
-      id: id
+      uid: uid
     }
   })
 }
@@ -57,6 +47,20 @@ export function updateOwner(cid, uid) {
     params: {
       cid: cid,
       uid: uid
+    }
+  })
+}
+//搜素
+export function search(current, size, column, like, owner) {
+  return request({
+    method: 'post',
+    url: '/customer/search',
+    params: {
+      current: current,
+      size: size,
+      column: column,
+      like: like,
+      owner: owner // 0-公海
     }
   })
 }

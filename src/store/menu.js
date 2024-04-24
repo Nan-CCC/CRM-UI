@@ -3,7 +3,6 @@ import { defineStore } from "pinia";
 import { ref, reactive } from 'vue'
 
 export const useMenuStore = defineStore('menu', () => {
-  //定义管理用户数据的state
   //数据库菜单数据
   const menuInfo = ref([])
   // 定义获取接口数据的action函数

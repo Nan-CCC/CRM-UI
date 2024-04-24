@@ -26,6 +26,14 @@ if (menu) {
   routers.forEach(item => {
     router.addRoute('Home', item)
   })
+  router.addRoute('Data', {
+    path: 'details/:id',
+    name: 'Details',
+    component: () => import('../views/customer/Details.vue'),
+    meta: {
+      title: '客户详情'
+    }
+  })
 }
 
 //守卫
@@ -59,6 +67,17 @@ router.beforeEach(async (to, from) => {
       })
     }
   }
+
+  //从新增订单-->其他 删除session
+  if (oldPath == '/sale/myorder/addOrder') {
+    if (sessionStorage.getItem('active')) {
+      sessionStorage.removeItem('active')
+    }
+    if (sessionStorage.getItem('noworder')) {
+      sessionStorage.removeItem('noworder')
+    }
+  }
+
 })
 
 export default router

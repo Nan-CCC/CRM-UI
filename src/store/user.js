@@ -7,6 +7,7 @@ import { loginAPI } from "@/api/login";
 import { getUserInfoByToken } from "@/api/modules/user";
 import { useMenuStore } from "@/store/menu"
 
+//存储当前登录用户
 export const useUserStore = defineStore('user', () => {
   //定义管理用户数据的state
   const userInfo = ref({})

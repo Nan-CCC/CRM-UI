@@ -9,16 +9,15 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useRouter, useRoute } from "vue-router"
 const router = useRouter()
-
 //tab
-const des = ref('Addorder')
+const des = ref('AddOrder')
 const tabs = ref([
   {
     label: '新增订单',
-    name: 'Addorder'
+    name: 'AddOrder'
   },
   {
     label: '进行中订单',
@@ -32,6 +31,9 @@ const tabs = ref([
 function handleClick(val) {
   router.push({ name: val.props.name })
 }
+onMounted(() => {
+  router.push({ name: 'AddOrder' })
+})
 </script>
 
 <style scoped lang="scss"></style>

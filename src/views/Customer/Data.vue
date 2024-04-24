@@ -1,108 +1,104 @@
 <template>
-  <div class="base bor p10">
-    <el-form :model="searchForm" :rules="rules" ref="rulesRef" :inline="true" class="demo-form-inline">
-      <el-form-item label="客户编号">
-        <el-input v-model="searchForm.id" clearable disabled />
-      </el-form-item>
-      <el-form-item label="客户姓名">
-        <el-input v-model="searchForm.name" clearable />
-      </el-form-item>
-      <el-form-item label="客户年龄">
-        <el-select v-model="searchForm.age" clearable placeholder="请选择年龄范围" style="width: 299px">
-          <el-option v-for="item in age" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="手机号码" prop="phone">
-        <el-input v-model="searchForm.phone" clearable />
-      </el-form-item>
-      <el-form-item label="电子邮箱" prop="email">
-        <el-input v-model="searchForm.email" clearable />
-      </el-form-item>
-      <el-form-item label="所属公司">
-        <el-input v-model="searchForm.company" clearable />
-      </el-form-item>
-      <el-form-item label="备注" style="margin-left: 28px;">
-        <el-input v-model="searchForm.info" clearable />
-        <!-- <el-tag v-for="tag in searchForm.info" :key="tag" closable :disable-transitions="false"
-          @close="handleClose(tag)" type="primary" size="large" class="tag">
-          {{ tag }}
-        </el-tag>
-        <el-input v-if="inputVisible" v-model="inputValue" @keyup.enter="handleInputConfirm" @blur="handleInputConfirm"
-          style="width: 100px;" />
-        <el-button v-else class="button-new-tag" @click="showInput">
-          + New Tag
-        </el-button> -->
-      </el-form-item>
-      <el-form-item style="float: right;margin-right: 35px;">
-        <div v-if="change">
-          <el-button type="primary" @click="add(rulesRef)">
-            <el-icon size="18">
-              <CirclePlus />
-            </el-icon>
-            <span>添加客户</span>
-          </el-button>
+  <div>
+    <div class="base bor p1510" v-if="route.fullPath === '/customer/data'">
+      <el-form :model="searchForm" :rules="rules" ref="rulesRef" :inline="true" class="demo-form-inline">
+        <el-form-item label="客户编号">
+          <el-input v-model="searchForm.id" clearable disabled />
+        </el-form-item>
+        <el-form-item label="客户姓名" prop="name" style="margin-left: -11px;">
+          <el-input v-model="searchForm.name" clearable />
+        </el-form-item>
+        <el-form-item label="客户年龄">
+          <el-select v-model="searchForm.age" clearable placeholder="请选择年龄范围" style="width: 299px">
+            <el-option v-for="item in age" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="手机号码" prop="phone">
+          <el-input v-model="searchForm.phone" clearable />
+        </el-form-item>
+        <el-form-item label="电子邮箱" prop="email">
+          <el-input v-model="searchForm.email" clearable />
+        </el-form-item>
+        <el-form-item label="所属公司">
+          <el-input v-model="searchForm.company" clearable />
+        </el-form-item>
+        <el-form-item label="备注" style="margin-left: 28px;">
+          <el-input v-model="searchForm.info" clearable />
+        </el-form-item>
+        <el-form-item style="float: right;margin-right: 35px;">
+          <div v-if="change">
+            <el-button type="primary" @click="add(rulesRef)">
+              <el-icon size="18">
+                <CirclePlus />
+              </el-icon>
+              <span>添加客户</span>
+            </el-button>
+          </div>
+          <div v-else>
+            <el-button @click="cancel">
+              <span>取消修改</span>
+            </el-button>
+            <el-button type="primary" @click="update(rulesRef)">
+              <el-icon size="18">
+                <Loading />
+              </el-icon>
+              <span>修改信息</span>
+            </el-button>
+          </div>
+        </el-form-item>
+      </el-form>
+      <div class="tool">
+        <el-button size="small">导出Excel</el-button>
+        <div class="fr">
+          <el-select v-model="select" size="small" style="width: 90px">
+            <el-option size="small" v-for=" item  in  option " :key="item.value" :label="item.label"
+              :value="item.value" />
+          </el-select>
+          <el-input size="small" v-model="searchtext" style="width: 150px;"></el-input>
+          <el-button size="small" type="primary" @click="tosearch">搜索</el-button>
         </div>
-        <div v-else>
-          <el-button @click="cancel">
-            <span>取消修改</span>
-          </el-button>
-          <el-button type="primary" @click="update(rulesRef)">
-            <el-icon size="18">
-              <Loading />
-            </el-icon>
-            <span>修改信息</span>
-          </el-button>
-        </div>
-      </el-form-item>
-    </el-form>
-    <div class="tool">
-      <el-button size="small">导出Excel</el-button>
-      <div class="fr">
-        <el-select v-model="select" size="small" style="width: 90px">
-          <el-option size="small" v-for=" item  in  option " :key="item.value" :label="item.label"
-            :value="item.value" />
-        </el-select>
-        <el-input size="small" v-model="search" style="width: 150px;"></el-input>
-        <el-button size="small" type="primary">搜索</el-button>
       </div>
+      <el-table :data="tableData" border @row-click="getData">
+        <el-table-column prop="name" label="客户姓名" width="120" />
+        <el-table-column label="客户年龄" width="120">
+          <template #default="props">
+            {{ age.map(item => item.label)[age.map(item => item.value).indexOf(props.row.age)] }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="phone" label="手机号码" width="180" />
+        <el-table-column prop="email" label="电子邮箱" width="200" />
+        <el-table-column prop="company" label="所属公司" width="200" show-overflow-tooltip />
+        <el-table-column prop="info" label="备注" show-overflow-tooltip />
+        <el-table-column label="详情" width="190">
+          <template #default="props">
+            <el-button type="warning" size="small" @click.stop="toDetail(props.row.id)">
+              查看详情
+            </el-button>
+            <el-button type="primary" size="small" @click.stop="toPublic(props.row.id)">
+              转到公海
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination class="mt15 flex-center" :pager-count="11" layout="prev, pager, next,total,sizes"
+        v-model:current-page="currentPage" v-model:page-size="pageSize" :total="total"
+        :page-sizes="[10, 20, 30, 40, 50]" @size-change="getListSize" @current-change="getListCurrent" />
     </div>
-    <el-table :data="tableData" border @row-click="getData">
-      <el-table-column prop="name" label="客户姓名" width="120" />
-      <el-table-column prop="age" label="客户年龄" width="120">
-      </el-table-column>
-      <el-table-column prop="phone" label="手机号码" width="180" />
-      <el-table-column prop="email" label="电子邮箱" width="200" />
-      <el-table-column prop="company" label="所属公司" width="200" show-overflow-tooltip />
-      <el-table-column prop="info" label="备注" show-overflow-tooltip />
-      <!-- <el-table-column label="备注">
-        <template #default="scope">
-          <el-tag type="primary" v-for=" item  in  scope.row.info " class="mr10">{{ item }}</el-tag>
-        </template>
-</el-table-column> -->
-      <el-table-column label="详情" width="190">
-        <template #default="props">
-          <el-button type="warning" size="small" @click="toDetail(props.row.id)">
-            查看详情
-          </el-button>
-          <el-button type="primary" size="small" @click="toPublic(props.row.id)">
-            转到公海
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination class="mt10 flex-center" @change="getNewList" :page-size="10" :pager-count="11"
-      layout="prev, pager, next" :total="total" />
+
+    <div v-else>
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ElInput } from 'element-plus'
-import { ElMessage } from 'element-plus'
+import { getSuccess } from '@/utils/tips'
 import { ref, reactive, onMounted } from 'vue'
 import { isPhone } from '@/utils/validator.js'
-import { useRouter } from "vue-router"
-import { getCustomer, addCustomer, updateCustomer, updateOwner } from '@/api/modules/customer'
-import { getUserInfoByToken } from '@/api/modules/user'
+import { useRouter, useRoute } from "vue-router"
+import { getCustomer, addCustomer, updateCustomer, updateOwner, search } from '@/api/modules/customer'
+import { useUserStore } from '@/store/user'
 /**
  * 表单
  */
@@ -121,6 +117,11 @@ const searchForm = reactive({
 const rulesRef = ref()
 //校验规则
 const rules = reactive({
+  name: [{
+    required: true,
+    message: '请输入客户姓名',
+    trigger: 'blur'
+  }],
   phone: [{
     validator: isPhone,
     message: '请输入正确的手机格式',
@@ -159,41 +160,8 @@ const age = [
     label: '60岁以上'
   },
 ]
-
 //增加/修改按钮
 const change = ref(true)
-/**
- * 备注标签(最多5个)
- */
-//输入框内容
-const inputValue = ref('')
-//输入框显示
-const inputVisible = ref(false)
-//删除标签
-const handleClose = (tag) => {
-  searchForm.info.splice(searchForm.info.indexOf(tag), 1)
-}
-//显示输入框
-const showInput = () => {
-  if (searchForm.info.length == 5) {
-    ElMessage({
-      message: '标签最多添加5个',
-      type: 'warning',
-    })
-  }
-  else {
-    inputVisible.value = true
-  }
-
-}
-//增加标签
-const handleInputConfirm = () => {
-  if (inputValue.value) {
-    searchForm.info.push(inputValue.value)
-  }
-  inputVisible.value = false
-  inputValue.value = ''
-}
 /**
  * 添加客户
  */
@@ -207,11 +175,8 @@ const add = (val) => {
       }
       addCustomer(costomer).then((res) => {
         if (res.code == 200) {
-          ElMessage({
-            type: 'success',
-            message: '添加成功'
-          })
-          getTableData()
+          getSuccess('添加成功')
+          getList(currentPage.value, pageSize.value)
         }
       })
       //清空对象
@@ -221,7 +186,6 @@ const add = (val) => {
     }
   })
 }
-
 /**
  * 修改客户
  */
@@ -235,17 +199,15 @@ const update = (val) => {
       }
       updateCustomer(costomer).then((res) => {
         if (res.code == 200) {
-          ElMessage({
-            type: 'success',
-            message: '修改成功'
-          })
-          getTableData()
+          getSuccess('修改成功')
+          getList(currentPage.value, pageSize.value)
         }
       })
       //清空对象
       for (var i in searchForm) {
         searchForm[i] = null
       }
+      change.value = true
     }
   })
 }
@@ -256,73 +218,6 @@ const cancel = () => {
   }
   change.value = true
 }
-/**
- * 根据条件搜索
- */
-//条件
-const select = ref('id')
-const option = [
-  {
-    value: 'id',
-    label: '客户编号'
-  },
-  {
-    value: 'name',
-    label: '客户姓名'
-  },
-  {
-    value: 'age',
-    label: '电子邮箱'
-  },
-  {
-    value: 'phone',
-    label: '手机号码'
-  },
-  {
-    value: 'email',
-    label: '电子邮箱'
-  },
-  {
-    value: 'company',
-    label: '所属公司'
-  },
-]
-//搜索框
-const search = ref('')
-
-/**
- * 表格
- */
-//分页总数
-const total = ref()
-//表格数据
-const tableData = ref([])
-function getTableData() {
-  let token = JSON.parse(sessionStorage.getItem('user')).userInfo
-  getUserInfoByToken(token).then((res) => {
-    if (res.code == 200) {
-      searchForm.uid = res.data.id
-      getCustomer(1, 10, res.data.id).then((res) => {
-        total.value = res.data.total
-        tableData.value = res.data.records
-      })
-    }
-  })
-}
-//分页
-function getNewList(page, size) {
-  let uid = searchForm.uid
-  getCustomer(page, 10, uid).then((res) => {
-    let userList = res.data.records
-    tableData.value = userList
-  })
-}
-// //根据数组值找下表（表格中年龄显示）
-// const switchAge = (val) => {
-//   var x = age.map(item => item.value).indexOf('20-')
-//   console.log(val);
-//   return val
-// }
 //获取一行数据
 const getData = (row, column, event) => {
   change.value = false
@@ -330,16 +225,82 @@ const getData = (row, column, event) => {
     searchForm[i] = row[i]
   }
 }
+/**
+ * 根据条件搜索
+ */
+//条件
+const select = ref('c_id')
+const option = [
+  {
+    value: 'c_id',
+    label: '客户编号'
+  },
+  {
+    value: 'c_name',
+    label: '客户姓名'
+  },
+  {
+    value: 'c_phone',
+    label: '手机号码'
+  },
+  {
+    value: 'c_email',
+    label: '电子邮箱'
+  },
+  {
+    value: 'c_company',
+    label: '所属公司'
+  },
+]
+//搜索框
+const searchtext = ref('')
+async function tosearch() {
+  currentPage.value = 1
+  if (searchtext.value == '') {
+    //初始分页
+    pageSize.value = 10
+    getList(currentPage.value, pageSize.value)
+  }
+  else {
+    const { data } = await search(1, pageSize.value, select.value, searchtext.value, userStore.userInfo.id)
+    tableData.value = data.records
+    total.value = data.total
+  }
+}
+/**
+ * 表格
+ */
+//分页总数
+const total = ref()
+//初始页
+const currentPage = ref(1)
+//初始分页
+const pageSize = ref(10)
+//表格数据
+const tableData = ref([])
+
+const userStore = useUserStore()
+//分页
+async function getList(page, size) {
+  const { data } = await getCustomer(page, size, userStore.userInfo.id)
+  let userList = data.records
+  total.value = data.total
+  tableData.value = userList
+}
+async function getListSize(val) {
+  pageSize.value = val
+  getList(currentPage.value, val)
+}
+async function getListCurrent(val) {
+  currentPage.value = val
+  getList(val, pageSize.value)
+}
 
 //跳转查看详情
+const route = useRoute()
 const router = useRouter()
 const toDetail = (val) => {
-  router.push({
-    name: 'Details',
-    params: {
-      id: val
-    }
-  })
+  router.push({ name: "Details", params: { id: val } })
 }
 //转到公海
 function toPublic(val) {
@@ -347,14 +308,13 @@ function toPublic(val) {
   let uid = ""
   updateOwner(cid, uid).then((res) => {
     if (res.code == 200) {
-      getTableData()
+      getList(currentPage.value, pageSize.value)
     }
   })
 }
 
-
 onMounted(() => {
-  getTableData()
+  getList(currentPage.value, pageSize.value)
 })
 </script>
 
