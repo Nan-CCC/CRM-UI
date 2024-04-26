@@ -39,8 +39,7 @@ import Sign from '@/components/Addorder/Sign.vue';
 import Delivery from '@/components/Addorder/Delivery.vue';
 import { onMounted, ref, watch } from 'vue'
 import { useNowOrderStore } from '@/store/nowOrder';
-import { updateStatus } from '@/api/modules/contract'
-import { useRoute } from 'vue-router';
+import { updateStatus } from '@/api/modules/order'
 
 const active = ref()
 /**
@@ -51,15 +50,13 @@ const nowOrderStore = useNowOrderStore()
 const createRef = ref(null)
 function save() {
   //未签约
-  nowOrderStore.changeStatus('10')
+  nowOrderStore.changeStatus('0')
   createRef.value.getOrder()
 }
 
 function createNext() {
   //草稿
-  nowOrderStore.changeStatus('00')
   createRef.value.next()
-  //createRef.value.getOrder('next')
 }
 /**
  * 合同
@@ -82,12 +79,11 @@ function signNext() {
 function clear() {
   active.value = 0
   nowOrderStore.clearOrder()
-  // console.log('闪闪闪');
-  // sessionStorage.removeItem('noworder')
+
 }
-//已收货
+//已发货
 async function end() {
-  const { code } = await updateStatus(nowOrderStore.oid, '20')
+  const { code } = await updateStatus(nowOrderStore.oid, '1')
   if (code == 200) {
     active.value = 0
     nowOrderStore.clearOrder()

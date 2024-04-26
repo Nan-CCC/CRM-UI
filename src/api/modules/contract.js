@@ -13,14 +13,3 @@ export function addContract(file, oid, date, newDate) {
     }
   })
 }
-//根据订单编号修改状态
-export function updateStatus(oid, status) {
-  return request({
-    method: 'put',
-    url: '/order/updateStatus',
-    params: {
-      oid: oid,
-      status: status
-    }
-  })
-}

@@ -77,7 +77,7 @@
     </div>
     <div class="base bor notice">
       <div class="title fs20">通知</div>
-      <el-table height="355">
+      <el-table height="280">
         <el-table-column prop="info" />
         <el-table-column prop="time" width="200px" />
       </el-table>
@@ -313,9 +313,10 @@ onMounted(() => {
 
 .notice {
   width: 46%;
-  height: 400px;
+  height: 350px;
   float: left;
   margin-top: -275px;
+  background-color: white;
 
   .title {
     margin-top: 20px;

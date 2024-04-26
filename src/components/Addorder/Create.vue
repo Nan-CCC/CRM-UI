@@ -106,12 +106,6 @@ const form = reactive({
   ],
 })
 
-//打印省市区 编码转文字
-// const chinaData = new EluiChinaAreaDht.ChinaArea().chinaAreaflat
-// function handleChange(val) {
-//   console.log(chinaData[val[0]]);
-// }
-
 //产品列表
 const optionPro = ref()
 async function getProduct() {

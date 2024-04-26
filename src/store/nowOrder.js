@@ -27,6 +27,10 @@ export const useNowOrderStore = defineStore('noworder', () => {
     orderInfo.status = data
   }
 
+  //获取订单oid
+  const setOid = (val) => {
+    oid.value = val
+  }
   //获取订单信息
   const getOrderInfo = (data1, data2) => {
     for (let key in data1) {
@@ -52,7 +56,7 @@ export const useNowOrderStore = defineStore('noworder', () => {
 
   }
 
-  return { oid, orderInfo, getAddOrder, changeStatus, getOrderInfo, clearOrder }
+  return { oid, orderInfo, getAddOrder, changeStatus, getOrderInfo, clearOrder, setOid }
 
 }, {
   persist: {

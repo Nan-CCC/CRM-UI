@@ -32,7 +32,9 @@ function handleClick(val) {
   router.push({ name: val.props.name })
 }
 onMounted(() => {
-  router.push({ name: 'AddOrder' })
+
+  //router.push({ name: 'AddOrder' })
+
 })
 </script>
 

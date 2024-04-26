@@ -22,7 +22,7 @@
               type="date" />
           </el-form-item>
           <el-form-item label="发货时间">
-            <el-radio-group v-model="form.delivery" @change="getDelivery">
+            <el-radio-group v-model="form.delivery">
               <el-radio :value="3">默认时间</el-radio>
               <el-radio :value="1001">
                 <template #>
@@ -72,6 +72,8 @@ const form = reactive({
   date: '',
   delivery: 3
 })
+
+
 //发货日期 其他选中转换日期选择器
 
 const delivery = ref(3)
@@ -80,10 +82,6 @@ function getNum(val) {
   console.log(val);
 }
 
-function getDelivery() {
-  //console.log(form.delivery);
-  //console.log(delivery.value);
-}
 //控制active
 let props = defineProps({
   active: Number
@@ -91,6 +89,7 @@ let props = defineProps({
 let emit = defineEmits(["update:active"])
 //获取合同
 async function getContract() {
+  //发货日期选择自定义
   if (form.delivery == 1001) {
     form.delivery = delivery.value
   }
@@ -101,18 +100,27 @@ async function getContract() {
     getError('请上传合同')
   }
   else {
-    await orderStore.getAddOrder()
+    if (!orderStore.oid) {
+      await orderStore.getAddOrder()
+    }
+
     if (orderStore.oid) {
+
       let newDate = addDate(form.date, form.delivery)
+
       orderStore.changeStatus(newDate)
+
       let formData = new window.FormData()
+
       formData.append('file', file.value)
+
       const { code } = await addContract(formData, orderStore.oid, form.date, newDate)
       if (code == 200) {
         upload.value.clearFiles()
         form.date = ''
         emit("update:active", 3)
       }
+      // console.log('555');
     }
   }
 
