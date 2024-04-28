@@ -107,6 +107,7 @@ onMounted(() => {
     sessionStorage.setItem('active', 0)
   }
   //重新获取order
+  //防止删除session后，重新创建的session仍有之前数据
   if (sessionStorage.getItem('noworder') == null) {
     nowOrderStore.clearOrder()
   }

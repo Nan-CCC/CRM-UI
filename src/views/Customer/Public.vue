@@ -279,13 +279,13 @@ async function getListCurrent(val) {
 //搜索框
 const searchtext = ref('')
 async function tosearch() {
-  currentPage.value = 1
   if (searchtext.value == '') {
     //初始分页
     pageSize.value = 10
     getList(currentPage.value, pageSize.value)
   }
   else {
+    currentPage.value = 1
     const { data } = await search(1, pageSize.value, select.value, searchtext.value, 0)
     tableData.value = data.records
     total.value = data.total

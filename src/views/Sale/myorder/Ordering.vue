@@ -8,7 +8,7 @@
             :value="item.value" />
         </el-select>
         <el-input size="small" v-model="search" style="width: 150px;"></el-input>
-        <el-button size="small" type="primary">搜索</el-button>
+        <el-button size="small" type="primary" @click="getSearch">搜索</el-button>
       </div>
     </div>
     <el-table :data="tableData" border table-layout="fixed">
@@ -71,18 +71,51 @@ import { onMounted, reactive, ref } from 'vue';
 import { EluiChinaAreaDht } from 'elui-china-area-dht'
 import { useNowOrderStore } from '@/store/nowOrder';
 import { useRouter } from 'vue-router';
-import { deleteOrderById,updateStatus } from '@/api/modules/order'
+import { deleteOrderById,updateStatus,searchByColumn } from '@/api/modules/order'
 
+/**
+ * 搜索
+*/
+const select=ref('cid')
+const option=[
+  {
+    value:'cid',
+    label:'客户编号'
+  },
+  {
+    value: 'name',
+    label: '客户名称'
+  },
+  {
+    value: 'phone',
+    label: '联系电话'
+  },
+  {
+    value: 'date',
+    label: '发货日期'
+  },
+]
+const search=ref()
+async function getSearch(){
+  if(search.value==''){
+    getList(currentPage.value,pageSize.value)
+  }
+  else{
+    currentPage.value=1
+    const { data }=await searchByColumn(1,pageSize.value,'0',select.value,search.value)
+    tableData.value=data.records
+    total.value=data.total
+  }
+
+}
 //表格
 const tableData = ref([])
-
 //省市区 编码->文字
 const chinaData = new EluiChinaAreaDht.ChinaArea().chinaAreaflat
 function getArea(v1, v2, v3) {
   //打印省市区 编码转文字
   return chinaData[v1].label + '-' + chinaData[v2].label + '-' + chinaData[v3].label;
 }
-
 /**
  * 分页
  */

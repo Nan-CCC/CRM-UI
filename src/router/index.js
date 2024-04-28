@@ -77,6 +77,12 @@ router.beforeEach(async (to, from) => {
       sessionStorage.removeItem('noworder')
     }
   }
+  // //从我的订单-->其他
+  if (oldPath.includes('sale/myorder') && !nowPath.includes('sale/myorder')) {
+    if (sessionStorage.getItem('tab')) {
+      sessionStorage.removeItem('tab')
+    }
+  }
 
 })
 

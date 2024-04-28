@@ -49,3 +49,18 @@ export function deleteOrderById(oid) {
     }
   })
 }
+
+//搜索
+export function searchByColumn(current, size, status, column, like) {
+  return request({
+    method: 'post',
+    url: 'order/orderbylike',
+    params: {
+      current,
+      size,
+      status,
+      column,
+      like
+    }
+  })
+}
