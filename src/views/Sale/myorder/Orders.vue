@@ -16,9 +16,10 @@
       <el-table-column prop="cid" label="客户编号" />
       <el-table-column prop="contact" label="合同">
         <template #default="props">
-          <el-button color="#88aaef" size="small" plain   @click="getContent(props.row)">下载</el-button>
+          <el-button color="#88aaef" size="small" plain @click="getContent(props.row)">下载</el-button>
         </template>
       </el-table-column>
+      <el-table-column prop="createTime" label="创建时间" />
       <el-table-column prop="status" label="状态">
         <template #default="props">
           <div>
@@ -27,40 +28,43 @@
         </template>
       </el-table-column>
     </el-table>
-        <el-pagination class="mt15 flex-center" :pager-count="11" layout="prev, pager, next,total,sizes"
+    <el-pagination class="mt15 flex-center" :pager-count="11" layout="prev, pager, next,total,sizes"
       v-model:current-page="currentPage" v-model:page-size="pageSize" :total="total" :page-sizes="[10, 20, 30, 40, 50]"
       @size-change="getListSize" @current-change="getListCurrent" />
   </div>
 </template>
 
 <script setup>
-import { reactive ,onMounted,ref} from 'vue';
+import { onMounted, ref } from 'vue';
 import { getOrderByStatus } from '@/api/modules/order';
-import { deleteOrderById,updateStatus,searchByColumn } from '@/api/modules/order'
+import { searchByColumn } from '@/api/modules/order'
+import { useUserStore } from '@/store/user'
+
+const userStore = useUserStore()
 /**
  * 搜索
 */
-const select=ref('oid')
-const option=[
+const select = ref('oid')
+const option = [
   {
-    value:'cid',
-    label:'客户编号'
+    value: 'cid',
+    label: '客户编号'
   },
   {
     value: 'oid',
     label: '订单编号'
   },
 ]
-const search=ref()
-async function getSearch(){
-  if(search.value==''){
-    getList(currentPage.value,pageSize.value)
+const search = ref()
+async function getSearch() {
+  if (search.value == '') {
+    getList(currentPage.value, pageSize.value)
   }
-  else{
-    currentPage.value=1
-    const { data }=await searchByColumn(1,pageSize.value,'1',select.value,search.value)
-    tableData.value=data.records
-    total.value=data.total
+  else {
+    currentPage.value = 1
+    const { data } = await searchByColumn(1, pageSize.value, '1', select.value, search.value, userStore.userInfo.id)
+    tableData.value = data.records
+    total.value = data.total
   }
 
 }
@@ -76,7 +80,7 @@ const currentPage = ref(1)
 const pageSize = ref(10)
 //分页
 async function getList(page, size) {
-  const { data } = await getOrderByStatus("1", page, size)
+  const { data } = await getOrderByStatus("1", page, size, userStore.userInfo.id)
   let order = data.records
   total.value = data.total
   tableData.value = order
@@ -93,7 +97,7 @@ async function getListCurrent(val) {
 }
 //初始列表
 async function getOrder() {
-  const { data } = await getOrderByStatus("1", 1, 10)
+  const { data } = await getOrderByStatus("1", 1, 10, userStore.userInfo.id)
   total.value = data.total
   tableData.value = data.records
 }
@@ -116,6 +120,7 @@ async function getContent(val) {
 
 onMounted(() => {
   getOrder()
+
 })
 </script>
 

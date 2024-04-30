@@ -13,3 +13,21 @@ export function addDate(dateTemp, days) {
   if (date < 10) date = "0" + date;
   return (year + "-" + month + "-" + date);
 }
+//计算 proList
+//订单总额
+export function getOrderSumPrice(list) {
+  let sum = 0
+  list.map(item => {
+    sum += item.num * item.price
+  })
+  return sum
+}
+//计算订单数
+export function getOrderSumNum(list) {
+  let oidList = []
+  list.map(item => {
+    oidList.push(item.oid)
+  })
+  let newOidList = Array.from(new Set(oidList))
+  return newOidList.length
+}

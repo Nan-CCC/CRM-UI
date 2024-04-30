@@ -16,14 +16,15 @@ export function addOrder(data) {
   })
 }
 
-export function getOrderByStatus(status, current, size) {
+export function getOrderByStatus(status, current, size, uid) {
   return request({
     method: 'post',
     url: '/order/orderbystatus',
     params: {
       status: status,
       current: current,
-      size: size
+      size: size,
+      uid: uid
     }
   })
 }
@@ -51,7 +52,7 @@ export function deleteOrderById(oid) {
 }
 
 //搜索
-export function searchByColumn(current, size, status, column, like) {
+export function searchByColumn(current, size, status, column, like, uid) {
   return request({
     method: 'post',
     url: 'order/orderbylike',
@@ -60,7 +61,33 @@ export function searchByColumn(current, size, status, column, like) {
       size,
       status,
       column,
-      like
+      like,
+      uid
     }
+  })
+}
+
+//产品列表，计算统计
+export function getProList(date, uid) {
+  return request({
+    method: 'post',
+    url: '/order/selectByMonth',
+    params: {
+      date,
+      uid
+    }
+  })
+}
+
+//获取表数据
+export function getDataByLine(list, column, uid) {
+  return request({
+    method: 'post',
+    url: '/order/selectbychart',
+    params: {
+      column,
+      uid
+    },
+    data: list
   })
 }

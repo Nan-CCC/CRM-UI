@@ -71,16 +71,18 @@ import { onMounted, reactive, ref } from 'vue';
 import { EluiChinaAreaDht } from 'elui-china-area-dht'
 import { useNowOrderStore } from '@/store/nowOrder';
 import { useRouter } from 'vue-router';
-import { deleteOrderById,updateStatus,searchByColumn } from '@/api/modules/order'
+import { deleteOrderById, updateStatus, searchByColumn } from '@/api/modules/order'
+import { useUserStore } from '@/store/user'
 
+const userStore = useUserStore()
 /**
  * 搜索
 */
-const select=ref('cid')
-const option=[
+const select = ref('cid')
+const option = [
   {
-    value:'cid',
-    label:'客户编号'
+    value: 'cid',
+    label: '客户编号'
   },
   {
     value: 'name',
@@ -95,16 +97,16 @@ const option=[
     label: '发货日期'
   },
 ]
-const search=ref()
-async function getSearch(){
-  if(search.value==''){
-    getList(currentPage.value,pageSize.value)
+const search = ref()
+async function getSearch() {
+  if (search.value == '') {
+    getList(currentPage.value, pageSize.value)
   }
-  else{
-    currentPage.value=1
-    const { data }=await searchByColumn(1,pageSize.value,'0',select.value,search.value)
-    tableData.value=data.records
-    total.value=data.total
+  else {
+    currentPage.value = 1
+    const { data } = await searchByColumn(1, pageSize.value, '0', select.value, search.value, userStore.userInfo.id)
+    tableData.value = data.records
+    total.value = data.total
   }
 
 }
@@ -127,7 +129,7 @@ const currentPage = ref(1)
 const pageSize = ref(10)
 //分页
 async function getList(page, size) {
-  const { data } = await getOrderByStatus("0", page, size)
+  const { data } = await getOrderByStatus("0", page, size, userStore.userInfo.id)
   let order = data.records
   total.value = data.total
   tableData.value = order
@@ -144,7 +146,7 @@ async function getListCurrent(val) {
 }
 //初始列表
 async function getOrder() {
-  const { data } = await getOrderByStatus("0", 1, 10)
+  const { data } = await getOrderByStatus("0", 1, 10, userStore.userInfo.id)
   total.value = data.total
   tableData.value = data.records
 }
@@ -172,6 +174,7 @@ const orderStore = useNowOrderStore()
 function changeOrder(val) {
   orderStore.getOrderInfo(val, '')
   orderStore.setOid(val.oid)
+  sessionStorage.setItem('tab', 'AddOrder')
   sessionStorage.setItem('active', 2)
   router.push({ name: 'AddOrder' })
 }
@@ -179,13 +182,13 @@ function changeOrder(val) {
 //删除
 async function deleteOrder(val) {
   await deleteOrderById(val.oid)
-  await getList(currentPage.value,pageSize.value)
+  await getList(currentPage.value, pageSize.value)
 }
 
 //待发货
-async function toEnd(val){
+async function toEnd(val) {
   await updateStatus(val.oid, '1')
-  await getList(currentPage.value,pageSize.value)
+  await getList(currentPage.value, pageSize.value)
 }
 onMounted(() => {
   getOrder()

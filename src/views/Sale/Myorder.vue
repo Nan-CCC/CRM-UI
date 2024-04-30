@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted,watch } from 'vue';
+import { ref, reactive, onMounted, watch, onUpdated } from 'vue';
 import { useRouter, useRoute } from "vue-router"
 const router = useRouter()
 //tab
@@ -35,6 +35,11 @@ function handleClick(val) {
 //监听
 watch(des, (newValue, oldValue) => {
   sessionStorage.setItem('tab', des.value)
+})
+onUpdated(() => {
+  if (sessionStorage.getItem('tab') != null) {
+    des.value = sessionStorage.getItem('tab')
+  }
 })
 onMounted(() => {
   //页面刷新不变
