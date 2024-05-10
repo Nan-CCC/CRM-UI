@@ -20,9 +20,15 @@
           <el-form-item label="邮箱地址">
             <el-input v-model="customInfo.email" />
           </el-form-item>
-          <el-form-item label="来源">
-            <el-select v-model="customInfo.from" filterable allow-create default-first-option :reserve-keyword="false">
-              <el-option v-for="item in optionsFrom" :label="item.label" :value="item.value" />
+          <el-form-item label="活动来源">
+            <el-select v-model="customInfo.active" filterable allow-create default-first-option
+              :reserve-keyword="false">
+              <el-option v-for="item in activeList" :label="item.name" :value="item.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="平台来源">
+            <el-select v-model="customInfo.pid" filterable allow-create default-first-option :reserve-keyword="false">
+              <el-option v-for="item in platformList" :label="item.name" :value="item.id" />
             </el-select>
           </el-form-item>
         </el-form>
@@ -30,7 +36,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="save">
+          <el-button type="primary" @click="dialogVisible = false">
             保存
           </el-button>
         </div>
@@ -40,8 +46,9 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
-
+import { ref, reactive, onMounted } from 'vue';
+import { getAll } from '@/api/modules/platform'
+import { getInfoById } from '@/api/modules/customer'
 const dialogVisible = ref(false)
 //表单数据
 const customInfo = reactive(
@@ -51,15 +58,20 @@ const customInfo = reactive(
     company: '',
     phone: '',
     email: '',
-    from: '',
+    active: '',
+    pid: ''
   }
 )
 //编辑选中id
 const cusId = ref(null)
-function handleOpen(visable, id) {
+async function handleOpen(visable, id) {
   dialogVisible.value = visable
   cusId.value = id
-  console.log(cusId.value);
+  const { data } = await getInfoById(id)
+  console.log(data);
+  for (let i in customInfo) {
+    customInfo[i] = data[i]
+  }
 }
 //年龄选择
 const options = [
@@ -88,32 +100,26 @@ const options = [
     value: '60+',
   },
 ]
-//来源选择
-const optionsFrom = [
-  {
-    label: '微博',
-    value: '微博'
-  },
-  {
-    label: '抖音',
-    value: '抖音'
-  },
-  {
-    label: '百度',
-    value: '百度'
-  },
-  {
-    label: '春日畅想',
-    value: '春日畅想'
-  }
-]
+//活动来源
+const activeList = ref([])
+
+//平台来源选择
+const platformList = ref([])
+async function getPlatformList() {
+  const { data } = await getAll()
+  platformList.value = data
+}
 //保存
 function save() {
   console.log(customInfo);
 }
+
 defineExpose({
   handleOpen
 });
+onMounted(() => {
+  getPlatformList()
+})
 </script>
 
 <style scoped lang="scss"></style>

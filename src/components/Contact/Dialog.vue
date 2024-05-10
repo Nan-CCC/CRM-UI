@@ -44,7 +44,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
-
+import { getInfoById } from '@/api/modules/customer'
 const dialogVisible = ref(false)
 //表单数据
 const customInfo = reactive(
@@ -64,9 +64,14 @@ const cusId = ref(null)
 const isdisable = ref(false)
 //弹窗标题
 const title = ref(null)
-function handleOpen(visable, id, type) {
+async function handleOpen(visable, id, type) {
   dialogVisible.value = visable
   cusId.value = id
+  const { data } = await getInfoById(id)
+  console.log(data);
+  for (let i in data) {
+    customInfo[i] = data[i]
+  }
   title.value = type
   isdisable.value = false
   if (type == '发送邮件') {

@@ -391,7 +391,6 @@ async function getChartData(valx, valy) {
       chartData.push(data)
     }
     await init(chartData)
-    console.log(chartData);
   }
 }
 async function init(val) {

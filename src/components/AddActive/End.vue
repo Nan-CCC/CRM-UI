@@ -2,8 +2,8 @@
   <div class="box">
     <div class="title">活动已结束</div>
     <div class="con">
-      <p>春日畅想plus</p>
-      <p>2024-03-21 - 2024-05-21</p>
+      <p></p>
+      <p></p>
     </div>
     <div class="but">
       <el-button type="primary" @click="toSubmit">返回</el-button>

@@ -2,8 +2,10 @@
   <div class="box">
     <div class="title">活动尚未开始</div>
     <div class="con">
-      <p>春日畅想plus</p>
-      <p>2024-03-21 - 2024-05-21</p>
+      <p>活动名称：{{ nowMarket.marketInfo.name }}</p>
+      <p>活动时间：{{ nowMarket.marketInfo.start }}-{{ nowMarket.marketInfo.end }}</p>
+      <p>审核人：{{ nowMarket.marketInfo.approver }}</p>
+      <p>审核时间：{{ nowMarket.marketInfo.pass }}</p>
     </div>
     <div class="but">
       <el-button @click="toSubmit">返回</el-button>
@@ -13,9 +15,13 @@
 
 <script setup>
 import { defineEmits } from 'vue';
+import { useNowMarketStore } from '@/store/marketing';
+const nowMarket = useNowMarketStore()
 const emit = defineEmits(['toZero'])
+
 function toSubmit() {
   emit('toZero')
+
 }
 </script>
 

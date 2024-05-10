@@ -16,37 +16,45 @@
           <div class="expand">
             <div class="title mb20">服务编号：{{ props.row.id }}</div>
             <el-timeline style="max-width: 600px">
-              <el-timeline-item v-for="(item, index) in  props.row.body " :key="index" :timestamp="item.time"
-                placement="top" :color="item.color">
+              <el-timeline-item v-for="(item, index) in  props.row.processList " :key="index"
+                :timestamp="item.changeTime" placement="top"
+                :color="item.cid == '' || item.cid == null ? '#bbdd22' : ''">
                 {{ item.content }}
               </el-timeline-item>
             </el-timeline>
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="order" label="订单编号" />
-      <el-table-column prop="user" label="客服人员" />
-      <el-table-column prop="date" label="发起时间" />
+      <el-table-column prop="oid" label="订单编号" />
+      <el-table-column prop="sCreate" label="发起时间" />
+      <el-table-column label="服务人员">
+        <template #default="props">
+          {{ (props.row.processList.find(item => item.uid
+          != null)).uid }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <template #default="prpos">
-          <el-button type="primary" size="small" @click="toOrder(prpos.row.order)">查看详情</el-button>
+          <el-button type="primary" size="small" @click="toOrder(prpos.row.oid)">查看详情</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <div class="flex-center mt10 mb10">
-      <el-pagination :page-size="20" :pager-count="11" layout="prev, pager, next" :total="10" />
-    </div>
   </div>
 
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useOrderStore } from '@/store/CustomerDetailsTabs'
+import { useRoute } from 'vue-router';
+import { getHistoryService } from '@/api/modules/service'
+const router = useRoute()
+//详情客户id
+const id = router.params.id
 const select = ref('id');
 const option = [
   {
-    label: '售后编号',
+    label: '订单编号',
     value: 'id'
   },
   {
@@ -62,45 +70,19 @@ const search = ref()
 /**
  * 售后
  */
-//模拟数据
 //时间戳颜色
 //客服 （绿）
 //客户 （灰）
-const tableData = [
-  {
-    id: 'FW0000000001',
-    date: '2024-03-02 15:48:52',
-    order: 'DD0000000111',
-    user: 'YG000002',
-    body: [
-      {
-        role: '客户',
-        content: '这批纱怎么有色差',
-        time: '2024-03-02 15:48:52',
-        color: '#e0e0e0',
-      },
-      {
-        role: 'YG000002',
-        content: '亲，这是正常现象，因为您的订单数量较大，所以调了三批货，每批染的颜色可能会有所不同哦',
-        time: '2024-03-02 15:50:52',
-        color: '#c8e1b1',
-      },
-      {
-        role: '客户',
-        content: '我要退货！！',
-        time: '2024-03-02 15:55:52',
-        color: '#e0e0e0',
-      },
-      {
-        role: 'YG000002',
-        content: '好的，将为您转接售后中心',
-        time: '2024-03-02 15:50:52',
-        color: '#c8e1b1',
-      },
-    ],
-
+const tableData = ref([])
+async function getServeList() {
+  const { data } = await getHistoryService(id, '0')
+  for (let i in data) {
+    tableData.value[i] = data[i].service
+    tableData.value[i].processList = data[i].processList
   }
-]
+  console.log(tableData.value);
+}
+
 //查看详情（订单id）
 //子传父
 const emit = defineEmits(['getOrder'])
@@ -113,7 +95,9 @@ const toOrder = (val) => {
 
 }
 
-
+onMounted(() => {
+  getServeList()
+})
 </script>
 
 <style scoped lang="scss">

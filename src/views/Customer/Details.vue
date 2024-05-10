@@ -1,24 +1,23 @@
 <template>
   <div style="background-color: #fff;" class="m15 bor ">
     <el-descriptions border>
-      <el-descriptions-item label="客户编号">{{ data.id }}</el-descriptions-item>
-      <el-descriptions-item label="客户姓名">{{ data.name }}</el-descriptions-item>
+      <el-descriptions-item label="客户编号">{{ cdata.id }}</el-descriptions-item>
+      <el-descriptions-item label="客户姓名">{{ cdata.name }}</el-descriptions-item>
       <el-descriptions-item label="客户年龄">
-        <el-tag type="warning">{{ age.map(item => item.label)[age.map(item => item.value).indexOf(data.age)]
+        <el-tag type="warning">{{ age.map(item => item.label)[age.map(item => item.value).indexOf(cdata.age)]
           }}</el-tag>
       </el-descriptions-item>
       <el-descriptions-item label="手机号码">
-        {{ data.phone }}
+        {{ cdata.phone }}
       </el-descriptions-item>
-      <el-descriptions-item label="电子邮箱">{{ data.email }}</el-descriptions-item>
-      <el-descriptions-item label="所属公司">{{ data.company }}</el-descriptions-item>
+      <el-descriptions-item label="电子邮箱">{{ cdata.email }}</el-descriptions-item>
+      <el-descriptions-item label="所属公司">{{ cdata.company }}</el-descriptions-item>
       <el-descriptions-item label="备注" span="2">
-        {{ data.info }}
+        {{ cdata.info }}
       </el-descriptions-item>
       <el-descriptions-item label="评级">
-        <el-tag type="primary" v-if="!false">老客户</el-tag>
-        <el-tag type="info" v-else-if="false">普通</el-tag>
-        <el-tag type="error" v-else="false">新用户</el-tag>
+        <el-tag type="error" v-if="flag">新客户</el-tag>
+        <el-tag type="primary" v-else>老客户</el-tag>
       </el-descriptions-item>
     </el-descriptions>
     <el-tabs v-model="des" @tab-click="handleClick">
@@ -33,9 +32,6 @@
     <div v-else-if="des == 2">
       <Three></Three>
     </div>
-    <div v-else>
-      <Four></Four>
-    </div>
   </div>
 </template>
 
@@ -43,15 +39,21 @@
 import One from '@/components/Details/One.vue';
 import Two from '@/components/Details/Two.vue';
 import Three from '@/components/Details/Three.vue';
-import Four from '@/components/Details/Four.vue';
 import { ref, reactive, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { getInfoById } from '@/api/modules/customer'
+import { getHaveOrder } from '@/api/modules/order'
 const router = useRoute()
 //详情客户id
 const id = router.params.id
 //客户信息
-const data = reactive({})
+const cdata = reactive({})
+//判断是否是新客户
+const flag = ref()
+async function isOld() {
+  const { data } = await getHaveOrder(id)
+  flag.value = data
+}
 //年龄格式
 const age = [
   {
@@ -79,11 +81,11 @@ const age = [
     label: '60岁以上'
   },
 ]
-function getInfo() {
+async function getInfo() {
   getInfoById(id).then((res) => {
     if (res.code == 200) {
       for (var i in res.data) {
-        data[i] = res.data[i]
+        cdata[i] = res.data[i]
       }
     }
   })
@@ -105,11 +107,7 @@ const tabsTitle = ref([
   {
     label: '投诉记录',
     value: 2
-  },
-  {
-    label: '咨询记录',
-    value: 3
-  },
+  }
 ])
 const handleClick = (tab) => {
   // des.value = tab.index
@@ -119,8 +117,9 @@ const changeTab = () => {
   des.value = 0
 }
 
-onMounted(() => {
-  getInfo()
+onMounted(async () => {
+  await getInfo()
+  await isOld()
 })
 </script>
 

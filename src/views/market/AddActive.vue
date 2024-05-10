@@ -7,12 +7,11 @@
       <el-step title="已结束" description="活动已经结束" />
     </el-steps>
     <Create v-if="active == 0" @changeActive="active = 1"></Create>
-    <Approve v-if="active == 1"></Approve>
+    <Approve v-if="active == 1" @toZero="active = 0"></Approve>
     <Start v-if="active == 2" @toZero="active = 0"></Start>
-    <Ongoing v-if="active == 3"></Ongoing>
+    <Ongoing v-if="active == 3" @toZero="active = 0"></Ongoing>
     <End v-if="active == 4" @toZero="active = 0"></End>
   </div>
-  <button @click="next">+1</button>
 </template>
 
 <script setup>
@@ -21,16 +20,25 @@ import Approve from '@/components/AddActive/Approve.vue';
 import Start from '@/components/AddActive/Start.vue';
 import Ongoing from '@/components/AddActive/Ongoing.vue'
 import End from '@/components/AddActive/End.vue'
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
-const active = ref(0)
+const active = ref()
 
-const next = () => {
-  if (active.value++ > 3) {
-    active.value = 0
+//监听active，变化时改变session
+watch(active, (newValue, oldValue) => {
+  sessionStorage.setItem('active', newValue)
+})
+
+onMounted(() => {
+  //防止刷新页面数据归零
+  if (sessionStorage.getItem('active') != null) {
+    active.value = parseInt(sessionStorage.getItem('active'))
   }
-}
-
+  else {
+    active.value = 0
+    sessionStorage.setItem('active', 0)
+  }
+})
 </script>
 
 <style scoped lang="scss">

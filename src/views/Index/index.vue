@@ -77,9 +77,22 @@
     </div>
     <div class="base bor notice">
       <div class="title fs20">通知</div>
-      <el-table height="280">
-        <el-table-column prop="info" />
-        <el-table-column prop="time" width="200px" />
+      <el-table height="280" :data="logTable">
+        <el-table-column>
+          <template #default="props">
+            <span v-if="props.row.businessType == 1">添加</span>
+            <span v-if="props.row.businessType == 2">删除</span>
+            <span v-if="props.row.businessType == 3">修改</span>
+            <span v-if="props.row.businessType == 4">其他操作</span>
+            -
+            <span>{{ props.row.title }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column width="200px">
+          <template #default="props">
+            <span style="color: #aaa;">{{ props.row.time }}</span>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
   </div>
@@ -110,6 +123,8 @@ import { ref, reactive, onMounted } from 'vue'
 import { useUserStore } from '@/store/user';
 import { addSchedule, getOneDay, queryAllSchedule, updateOneDay, daleteOneDay, updateStatus } from '@/api/modules/schedule'
 import { Check, Document } from '@element-plus/icons-vue';
+import { selectLast } from '@/api/modules/log'
+import { time } from 'echarts';
 /**
  * 获取用户信息
  */
@@ -125,7 +140,6 @@ const state = reactive({
 const updateTime = () => {
   state.date = new Date();
 };
-
 
 /**
  * 日历
@@ -224,11 +238,20 @@ async function save() {
   await getAllSchedule()
 
 }
-
+const logTable = ref([])
+async function getLog() {
+  logTable.value = []
+  const { data } = await selectLast()
+  for (let i in data) {
+    logTable.value[i] = data[i]
+  }
+  console.log(logTable.value);
+}
 onMounted(() => {
   setInterval(updateTime, 1000);
   getTodaySchedule()
   getAllSchedule()
+  getLog()
 });
 </script>
 

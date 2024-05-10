@@ -14,99 +14,129 @@
     <el-table :data="tableData" style="width: 100%">
       <el-table-column prop="name" label="活动名称" width="300" />
       <el-table-column label="活动内容">
-        <template #default>
-          <el-button type="primary" size="small">下载</el-button>
+        <template #default="props">
+          <el-button type="primary" size="small" @click="download(props.row.id)">下载</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="start" label="开始时间" />
       <el-table-column prop="end" label="结束时间" />
       <el-table-column prop="status" label="活动状态">
         <template #default="props">
-          <el-tag v-if="props.row.status == '草稿' || props.row.status == '未开始'">{{ props.row.status }}</el-tag>
-          <el-tag v-if="props.row.status == '待审核'" type="warning">{{ props.row.status }}</el-tag>
-          <el-tag v-if="props.row.status == '进行中'" color="#ebf2f8" style="color:#1481bb">{{ props.row.status
-            }}</el-tag>
-          <el-tag v-if="props.row.status == '已结束'" type="info">{{ props.row.status }}</el-tag>
-          <el-tag v-if="props.row.status == '未通过'" type="danger">{{ props.row.status }}</el-tag>
+          <el-tag v-if="props.row.status == '0'">草稿</el-tag>
+          <el-tag v-if="props.row.status == '1'" type="warning">待审核</el-tag>
+          <el-tag v-if="props.row.status == '2'" color="#ebf2f8" style="color:#1481bb">进行中</el-tag>
+          <el-tag v-if="props.row.status == '3'" type="info">已结束</el-tag>
+          <el-tag v-if="props.row.status == '4'" type="danger">未通过</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="address" label="操作">
         <template #default="props">
-          <el-button size="small" type="primary" plain>
-            查看详情
+          <el-button size="small" type="primary" plain @click="toDetail(props.row.id, props.row.status)">
+            查看进度
           </el-button>
-          <el-button size="small" v-if="props.row.status === '进行中' || props.row.status === '已结束'">
+          <!-- <el-button size="small" v-if="props.row.status === '3'">
             数据分析
-          </el-button>
+          </el-button> -->
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination class="mt10 flex-center page" :page-size="20" :pager-count="11" layout="prev, pager, next"
-      :total="1000" />
+    <el-pagination class="mt15 flex-center foot" :pager-count="11" layout="prev, pager, next,total,sizes"
+      v-model:current-page="currentPage" v-model:page-size="pageSize" :total="total" :page-sizes="[10, 20, 30, 40, 50]"
+      @size-change="getListSize" @current-change="getListCurrent" />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-
-const tableData = ref([
+import { onMounted, ref } from 'vue';
+import { selectAll, selectById } from '@/api/modules/market'
+import { useRouter } from 'vue-router';
+import { useNowMarketStore } from '@/store/marketing';
+const nowMarket = useNowMarketStore()
+const router = useRouter()
+const select = ref('id')
+const option = ref([
   {
-    id: 'YX000001',
-    name: '春日畅想计划春日畅想计划春日畅想计划',
-    content: 'C:/',
-    start: '2024-03-21',
-    end: '2024-05-21',
-    status: '草稿',
-  },
-  {
-    id: 'YX000002',
-    name: '春日畅想计划春日畅想',
-    content: 'C:/',
-    start: '2024-03-21',
-    end: '2024-05-21',
-    status: '待审核',
-  },
-  {
-    id: 'YX000001',
-    name: '春日畅想计划',
-    content: 'C:/',
-    start: '2024-03-21',
-    end: '2024-05-21',
-    status: '未开始',
-  },
-  {
-    id: 'YX000001',
-    name: '春日畅想计划',
-    content: 'C:/',
-    start: '2024-03-21',
-    end: '2024-05-21',
-    status: '进行中',
-  },
-  {
-    id: 'YX000001',
-    name: '春日畅想计划',
-    content: 'C:/',
-    start: '2024-03-21',
-    end: '2024-05-21',
-    status: '进行中',
-  },
-  {
-    id: 'YX000004',
-    name: '春日畅想计划',
-    content: 'C:/',
-    start: '2024-03-21',
-    end: '2024-05-21',
-    status: '已结束',
-  },
-  {
-    id: 'YX000004',
-    name: '春日畅想计划',
-    content: 'C:/',
-    start: '2024-03-21',
-    end: '2024-05-21',
-    status: '未通过',
-  },
+    label: '活动编号',
+    value: 'id'
+  }
 ])
+
+const tableData = ref([])
+
+/**
+ * 分页
+ */
+//分页总数
+const total = ref()
+//初始页
+const currentPage = ref(1)
+//初始分页
+const pageSize = ref(10)
+//分页
+async function getList(page, size) {
+  const { data } = await selectAll(page, size)
+  let order = data.records
+  total.value = data.total
+  tableData.value = order
+}
+
+async function getListSize(val) {
+  pageSize.value = val
+  getList(currentPage.value, val)
+}
+
+async function getListCurrent(val) {
+  currentPage.value = val
+  getList(val, pageSize.value)
+}
+//初始列表
+async function getOrder() {
+  const { data } = await selectAll(1, 10)
+  total.value = data.total
+  tableData.value = data.records
+}
+
+//下载
+function download(val) {
+  let url = '/api/market/download?mid=' + val
+  //创建一个<a>
+  const link = document.createElement('a')
+  //设置跳转url
+  link.href = url
+  //设置下载属性
+  link.setAttribute('download', '')
+  //添加到页面
+  document.body.appendChild(link)
+  //点击
+  link.click()
+  //移出页面
+  document.body.removeChild(link)
+}
+//跳转进度
+async function toDetail(id, status) {
+  router.push('/market/addActive')
+  const { data } = await selectById(id)
+  nowMarket.setInfo(data)
+  console.log(nowMarket.marketInfo);
+  if (status == 0) {
+    sessionStorage.setItem('active', 1)
+  }
+  else if (status == 1) {
+    sessionStorage.setItem('active', 2)
+  }
+  else if (status == 2) {
+    sessionStorage.setItem('active', 3)
+  }
+  else if (status == 3) {
+    sessionStorage.setItem('active', 4)
+  }
+  else if (status == 4) {
+    sessionStorage.setItem('active', 0)
+  }
+}
+onMounted(() => {
+  getOrder()
+})
 </script>
 
 <style scoped lang="scss">
@@ -117,5 +147,9 @@ const tableData = ref([
 
 .page {
   padding-bottom: 10px;
+}
+
+.foot {
+  padding-bottom: 15px;
 }
 </style>

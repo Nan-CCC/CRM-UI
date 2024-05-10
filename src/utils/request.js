@@ -51,9 +51,9 @@ service.interceptors.response.use(
     console.log('-----错误响应拦截器------')
     console.log(error.message);
     getError(error.message)
-    //return Promise.resolve(error.response)
+    return Promise.resolve(error.response)
     //这种会出报错页面
-    return Promise.reject(error)
+    //return Promise.reject(error)
   }
 )
 

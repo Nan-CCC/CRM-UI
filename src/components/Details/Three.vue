@@ -12,47 +12,34 @@
     </div>
     <el-table :data="tableData" class="mt10" @cell-click="getContent">
       <el-table-column prop="id" label="投诉编号" width="200" />
-      <el-table-column label="投诉内容" in>
-        <template #default="props">
-          {{ contentLimit(props.row.content) }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="date" label="发起时间" width="270" />
+      <!-- 加个内容过多折叠的 -->
+      <el-table-column prop="content" label="投诉内容" />
+      <el-table-column prop="sCreate" label="发起时间" width="270" />
       <el-table-column label="状态" width="180">
         <template #default="prpos">
-          <el-tag v-if="prpos.row.user == ''" type="error">{{ prpos.row.status }}</el-tag>
-          <el-tag v-else>{{ prpos.row.status }}</el-tag>
+          <el-tag v-if="prpos.row.status == 1" type="error">已反馈</el-tag>
+          <el-tag v-else>已解决</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="user" label="经办人员" width="150" />
     </el-table>
-    <div class="flex-center mt10 mb10">
-      <el-pagination :page-size="20" :pager-count="11" layout="prev, pager, next" :total="1000" />
-    </div>
-
-    <el-dialog v-model="dialogVisible" title="投诉详情" width="500" :before-close="handleClose">
-      <div class="con p10">{{ con }}</div>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="dialogVisible = false">
-            确定
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
   </div>
 
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { getHistoryService } from '@/api/modules/service'
+const router = useRoute()
+//详情客户id
+const id = router.params.id
 /**
  * 搜索
  */
 const select = ref('id')
 const option = [
   {
-    label: '投诉编号',
+    label: '服务编号',
     value: 'id'
   },
   {
@@ -65,31 +52,15 @@ const option = [
   },
 ]
 //表格数据
-const tableData = [
-  {
-    id: 'FW0000000258',
-    content: '色差不一致',
-    date: '2024-03-14 13:55:20',
-    status: '待处理',
-    user: '',
-  },
-  {
-    id: 'FW0000000244',
-    content: '售后态度不好,有待改进',
-    date: '2024-03-14 13:55:20',
-    status: '已处理',
-    user: 'YG000002',
+const tableData = ref([])
+async function getServeList() {
+  const { data } = await getHistoryService(id, '1')
+  for (let i in data) {
+    tableData.value[i] = data[i].service
   }
-]
-
-const contentLimit = (val) => {
-  if (val.length > 26) {
-    return val.substring(0, 26) + '...'
-  }
-  else {
-    return val
-  }
+  console.log(tableData.value);
 }
+
 /**
  * 获取全部投诉内容
  */
@@ -104,6 +75,10 @@ const getContent = (row, column) => {
   }
 
 }
+
+onMounted(() => {
+  getServeList()
+})
 </script>
 
 <style scoped lang="scss">

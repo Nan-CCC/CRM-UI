@@ -17,3 +17,10 @@ export function getProductById(data) {
     }
   })
 }
+
+export function getCustomerTop() {
+  return request({
+    method: 'get',
+    url: 'produce/top'
+  })
+}

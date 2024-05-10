@@ -20,7 +20,7 @@
       </el-col>
       <el-col :span="1">
         <el-tooltip placement="bottom" effect="light">
-          <el-avatar @click="visible = !visible">临时</el-avatar>
+          <el-avatar @click="visible = !visible">{{ userStore.userInfo.name }}</el-avatar>
           <template #content>
             <div @click="exit" style="cursor: pointer;">
               退出

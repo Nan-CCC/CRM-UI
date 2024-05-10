@@ -91,3 +91,27 @@ export function getDataByLine(list, column, uid) {
     data: list
   })
 }
+
+//判断是否有过订单
+//true-没有-新客户
+export function getHaveOrder(cid) {
+  return request({
+    method: 'get',
+    url: 'order/isOld',
+    params: {
+      cid
+    }
+  })
+}
+
+//查询历史订单
+export function getHistory(cid, oid) {
+  return request({
+    method: 'get',
+    url: 'order/history',
+    params: {
+      cid,
+      oid
+    }
+  })
+}

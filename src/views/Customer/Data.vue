@@ -305,7 +305,7 @@ const toDetail = (val) => {
 //转到公海
 function toPublic(val) {
   let cid = val
-  let uid = ""
+  let uid = "public"
   updateOwner(cid, uid).then((res) => {
     if (res.code == 200) {
       getList(currentPage.value, pageSize.value)

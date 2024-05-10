@@ -31,3 +31,16 @@ export function getOrderSumNum(list) {
   let newOidList = Array.from(new Set(oidList))
   return newOidList.length
 }
+
+//获取标准当前时间 YY-MM-dd hh:mm:ss
+export function getTime(now) {
+  var year = now.getFullYear();
+  var month = (now.getMonth() + 1 < 10 ? '0' : '') + (now.getMonth() + 1);
+  var day = (now.getDate() < 10 ? '0' : '') + now.getDate();
+  var hour = (now.getHours() < 10 ? '0' : '') + now.getHours();
+  var minute = (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+  var second = (now.getSeconds() < 10 ? '0' : '') + now.getSeconds();
+
+  var currentTime = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+  return currentTime
+}

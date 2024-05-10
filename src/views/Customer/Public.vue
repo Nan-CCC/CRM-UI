@@ -101,7 +101,7 @@ const searchForm = reactive({
   company: '',
   phone: '',
   email: '',
-  info: ''
+  info: '',
 })
 //表单名称
 const rulesRef = ref()
@@ -164,6 +164,7 @@ const add = (val) => {
       for (var i in searchForm) {
         costomer[i] = searchForm[i]
       }
+      costomer.uid = 'public'
       addCustomer(costomer).then((res) => {
         if (res.code == 200) {
           getSuccess('添加成功')
@@ -236,7 +237,24 @@ const option = [
     label: '所属公司'
   },
 ]
-
+/**
+ * 搜索
+ */
+//搜索框
+const searchtext = ref('')
+async function tosearch() {
+  if (searchtext.value == '') {
+    //初始分页
+    pageSize.value = 10
+    getList(currentPage.value, pageSize.value)
+  }
+  else {
+    currentPage.value = 1
+    const { data } = await search(1, pageSize.value, select.value, searchtext.value, "public")
+    tableData.value = data.records
+    total.value = data.total
+  }
+}
 /**
  * 表格
  */
@@ -259,7 +277,7 @@ const pageSize = ref(10)
 
 //分页
 async function getList(page, size) {
-  const { data } = await getCustomer(page, size, 0)
+  const { data } = await getCustomer(page, size, "public")
   let userList = data.records
   total.value = data.total
   tableData.value = userList
@@ -273,24 +291,7 @@ async function getListCurrent(val) {
   currentPage.value = val
   getList(val, pageSize.value)
 }
-/**
- * 搜索
- */
-//搜索框
-const searchtext = ref('')
-async function tosearch() {
-  if (searchtext.value == '') {
-    //初始分页
-    pageSize.value = 10
-    getList(currentPage.value, pageSize.value)
-  }
-  else {
-    currentPage.value = 1
-    const { data } = await search(1, pageSize.value, select.value, searchtext.value, 0)
-    tableData.value = data.records
-    total.value = data.total
-  }
-}
+
 //转为客户
 function toOwner(val) {
   let userId = ''

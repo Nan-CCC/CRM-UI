@@ -2,7 +2,7 @@
   <div>
     <el-row class="m15">
       <el-col :span="18">
-        <div class="bor mr10" style="height: 760px;">
+        <div class="bor mr10" style="height: 565px;">
           <div class="tool">
             <el-button size="small" type="primary" @click="open">新建客户</el-button>
             <el-button size="small">导出Excel</el-button>
@@ -16,7 +16,7 @@
             </div>
           </div>
           <el-table :data="tableData" border style="width: 100%" table-layout="fixed">
-            <el-table-column prop="cusName" label="客户名称" width="90" fixed />
+            <el-table-column prop="name" label="客户名称" width="90" fixed />
             <el-table-column label="年龄段" width="80">
               <template #default="props">
                 <el-tag> {{ props.row.age }}</el-tag>
@@ -25,9 +25,16 @@
             <el-table-column prop="company" label="所属公司" width="200" />
             <el-table-column prop="phone" label="联系电话" width="120" />
             <el-table-column prop="email" label="邮箱地址" width="180" />
-            <el-table-column label="来源" width="200">
+            <el-table-column label="活动来源" width="200">
               <template #default="props">
-                <el-tag type="warning">{{ props.row.from }}</el-tag>
+                <div v-if="props.row.mid == '' || props.row.mid == null"></div>
+                <el-tag v-else type="warning">{{ props.row.mid }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="平台来源" width="200">
+              <template #default="props">
+                <div v-if="props.row.pid == '' || props.row.pid == null"></div>
+                <el-tag v-else type="warning">{{ props.row.pid }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="205">
@@ -44,34 +51,34 @@
               </template>
             </el-table-column>
           </el-table>
-          <el-pagination class="mt10 flex-center page" :page-size="20" :pager-count="11" layout="prev, pager, next"
-            :total="1000" />
+          <el-pagination class="mt15 flex-center" :pager-count="11" layout="prev, pager, next,total,sizes"
+            v-model:current-page="currentPage" v-model:page-size="pageSize" :total="total"
+            :page-sizes="[10, 20, 30, 40, 50]" @size-change="getListSize" @current-change="getListCurrent" />
         </div>
       </el-col>
       <el-col :span="6">
         <div class="bor mb10 top">
           <div class="toptitle">
             本月热销产品</div>
-          <div v-for="(item, index) in 10" class="con">
-            <div class="child1">
-              {{ index + 1 }}
-            </div>
-            <span class="child2">混纺绞丝纱</span>
-            <span class="child3">1202</span>
-            <span class="child4">份订单</span>
-          </div>
-        </div>
-        <div class="bor mb10 top">
-          <div class="toptitle">
-            本月咨询热搜
-          </div>
-          <div v-for="(item, index) in 10" class="con">
-            <div class="child1">
-              {{ index + 1 }}
-            </div>
-            <span class="child2">售后</span>
-            <span class="child3">1202</span>
-            <span class="child4">次</span>
+
+          <div v-for="(item, index) in top" class="con">
+            <el-row>
+              <el-col :span="5">
+                <div class="child1">
+                  {{ index + 1 }}
+                </div>
+              </el-col>
+              <el-col :span="13">
+                <span class="child2">{{ item.name }}</span>
+              </el-col>
+              <el-col :span="6">
+                <span class="child3">{{ item.num }}</span>
+                <span class="child4">元</span>
+              </el-col>
+            </el-row>
+
+
+
           </div>
         </div>
       </el-col>
@@ -81,145 +88,128 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import Dialog from '@/components/Chance/Dialog.vue';
-const tableData = reactive([
+import { getCustomer } from '@/api/modules/customer';
+import { getPlatform } from '@/api/modules/platform';
+const top = [
   {
-    id: 'KH000002',
-    cusName: '王小红1',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
+    "id": "CP000001",
+    "name": "竹纤维纱",
+    "price": 22,
+    "num": 20512
   },
   {
-    id: 'KH000003',
-    cusName: '王小红2',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
+    "id": "CP000004",
+    "name": "天丝纱",
+    "price": 30,
+    "num": 18230
   },
   {
-    id: 'KH000044',
-    cusName: '王小红3',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
+    "id": "CP000003",
+    "name": "粘胶纱",
+    "price": 26,
+    "num": 16825
   },
   {
-    id: 'KH000055',
-    cusName: '王小红',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
+    "id": "CP000007",
+    "name": "丝光棉染色纱",
+    "price": 26,
+    "num": 13320
   },
   {
-    id: 'KH0000083',
-    cusName: '王小红3',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
+    "id": "CP000013",
+    "name": "强捻纱",
+    "price": 30,
+    "num": 985
   },
   {
-    id: 'KH000012',
-    cusName: '王小红44',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
+    "id": "CP000014",
+    "name": "粗支纱",
+    "price": 22,
+    "num": 896
   },
   {
-    id: 'KH0000022',
-    cusName: '王小红21',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
+    "id": "CP000021",
+    "name": "阻燃纱",
+    "price": 32,
+    "num": 623
   },
   {
-    id: 'KH000002',
-    cusName: '王小红',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
+    "id": "CP000010",
+    "name": "缝纫线",
+    "price": 19.5,
+    "num": 563
   },
   {
-    id: 'KH000002',
-    cusName: '王小红',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
+    "id": "CP000015",
+    "name": "混纺纱",
+    "price": 25,
+    "num": 250
   },
   {
-    id: 'KH000002',
-    cusName: '王小红',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
+    "id": "CP000009",
+    "name": "水溶纱",
+    "price": 28,
+    "num": 234
   },
   {
-    id: 'KH000012',
-    cusName: '王小红44',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
+    "id": "CP000012",
+    "name": "反捻纱",
+    "price": 28,
+    "num": 228
   },
   {
-    id: 'KH0000022',
-    cusName: '王小红21',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
+    "id": "CP000017",
+    "name": "包芯纱",
+    "price": 26,
+    "num": 186
   },
   {
-    id: 'KH000002',
-    cusName: '王小红',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
+    "id": "CP000025",
+    "name": "赛络纺纱",
+    "price": 33.5,
+    "num": 165.5
   },
   {
-    id: 'KH000002',
-    cusName: '王小红',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
+    "id": "CP000026",
+    "name": "涡流纺纱",
+    "price": 34,
+    "num": 155
   },
   {
-    id: 'KH000002',
-    cusName: '王小红',
-    age: '20-30',
-    company: '红太阳xxxx有限公司',
-    phone: '14521452145',
-    email: '1452145214@qq.com',
-    from: '春日畅想',
-  }
-])
+    "id": "CP000016",
+    "name": "竹节纱",
+    "price": 23.5,
+    "num": 121
+  },
+
+]
+const tableData = ref([])
+//分页总数
+const total = ref()
+//初始页
+const currentPage = ref(1)
+//初始分页
+const pageSize = ref(10)
+//分页
+async function getList(page, size) {
+  const { data } = await getCustomer(page, size, "0")
+  let userList = data.records
+  total.value = data.total
+  tableData.value = userList
+}
+async function getListSize(val) {
+  pageSize.value = val
+  getList(currentPage.value, val)
+}
+
+async function getListCurrent(val) {
+  currentPage.value = val
+  getList(val, pageSize.value)
+}
+
+
 //弹窗组件
 const dialogRef = ref(null)
 //新建客户
@@ -234,6 +224,9 @@ function update(val) {
 function deleteById(val, index) {
   tableData.splice(index, 1);
 }
+onMounted(() => {
+  getList(currentPage.value, pageSize.value)
+})
 </script>
 
 <style scoped lang="scss">
@@ -243,12 +236,12 @@ function deleteById(val, index) {
 }
 
 .top {
-  height: 375px;
+  height: 565px;
   text-align: center;
 
   .toptitle {
     border-bottom: 1px solid #ddd;
-    padding: 5px;
+    padding: 15px;
     color: #5e902f;
   }
 
@@ -258,12 +251,14 @@ function deleteById(val, index) {
     opacity: 0.8;
     border-top: 1px #eee solid;
     line-height: 21px;
+    font-size: 14px;
 
     .child1 {
       display: inline-block;
-      font-weight: bolder;
-      color: #5e902f;
-      width: 30px;
+      font-weight: 900;
+      color: #f14c05;
+      width: 40px;
+
     }
 
     .child2 {
@@ -271,7 +266,7 @@ function deleteById(val, index) {
     }
 
     .child3 {
-      color: #df6717;
+      color: #2384b8;
       font-weight: 400;
     }
 

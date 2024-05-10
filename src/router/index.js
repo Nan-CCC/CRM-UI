@@ -84,6 +84,12 @@ router.beforeEach(async (to, from) => {
     }
   }
 
+  //从新增活动-->其他 删除session
+  if (oldPath == '/market/addActive') {
+    if (sessionStorage.getItem('active')) {
+      sessionStorage.removeItem('active')
+    }
+  }
 })
 
 export default router

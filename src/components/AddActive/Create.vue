@@ -5,13 +5,13 @@
         <el-input v-model="formData.name" maxlength="20" show-word-limit clearable />
       </el-form-item>
       <el-form-item label="活动详情">
-        <el-button type="primary" style="width: 80px;">
-          <el-icon>
-            <UploadFilled />
-          </el-icon>
-          &nbsp;上传
-        </el-button>
-        <span class="ml10 tips">仅限pdf/word</span>
+        <el-upload ref="upload" action="" :http-request="toRequest" :limit="1" :on-exceed="handleExceed"
+          :on-change="handleChange" :auto-upload="false">
+          <template #>
+            <el-button type="primary">上传</el-button>
+          </template>
+        </el-upload>
+        <!-- <span class="ml10 tips">仅限pdf/word</span> -->
       </el-form-item>
       <el-form-item label="活动时间">
         <el-date-picker v-model="formData.time" type="daterange" unlink-panels range-separator="To"
@@ -20,7 +20,7 @@
       <el-form-item label="策划人">
         <el-select v-model="formData.users" multiple placeholder="Select" filterable default-first-option clearable
           multiple-limit="4" :reserve-keyword="false">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
       </el-form-item>
       <el-form-item label="活动预算">
@@ -34,7 +34,7 @@
 
           <el-select v-if="!flag" v-model="addPlat" filterable allow-create placeholder="Select" style="width: 60px"
             @keyup.enter="add()" @blur="add()" size="small" class="ml15 mb15">
-            <el-option v-for="item in optionsPlat2" :label="item.label" :value="item.value" />
+            <el-option v-for="item in optionsPlat2" :label="item.name" :value="item.id" />
           </el-select>
 
           <el-button v-else size="small" class="ml15 mb15" @click="flag = false" color="#5e902f" plain>
@@ -46,7 +46,7 @@
       </el-form-item>
       <el-form-tiem>
         <div style="text-align: center;" class="mb15">
-          <el-button>
+          <el-button @click="save">
             保存
           </el-button>
           <el-button type="primary" @click="next">
@@ -60,66 +60,63 @@
 </template>
 
 <script setup>
-import { reactive, ref, defineEmits, computed } from 'vue';
-
+import { reactive, ref, defineEmits, computed, onMounted } from 'vue';
+import { getAllUser } from '@/api/modules/user'
+import { getAll, getPlatform } from '@/api/modules/platform';
+import { useUserStore } from '@/store/user';
+import { insert, uploadFile } from '@/api/modules/market'
+import { useNowMarketStore } from "@/store/marketing"
+import { getTime } from '@/utils/common'
+const userStore = useUserStore()
+const marketStore = useNowMarketStore()
 const formData = reactive({
   name: '',
   content: '',
-  time: '',
-  users: '',
+  time: [],
+  users: [userStore.userInfo.id],
   platform: [],
   budget: '10000'
 })
 //员工多选
-const options = [
-  {
-    label: '王小明',
-    value: 'YG000020'
-  },
-  {
-    label: '王小明2',
-    value: 'YG0000201'
-  },
-  {
-    label: '王小明3',
-    value: 'YG0000202'
-  },
-  {
-    label: '王小明4',
-    value: 'YG0000203'
-  },
-  {
-    label: '王小明5',
-    value: 'YG0000204'
-  },
-  {
-    label: '王小明6',
-    value: 'YG0000205'
-  },
-  {
-    label: '王小明7',
-    value: 'YG0000206'
-  },
+const options = ref([])
+async function getUserList() {
+  const { data } = await getAllUser()
+  let list = data
+  options.value = list
+}
 
-]
+//上传 
+const upload = ref({})
+//上传文件超过1个，清除已上传的重新上传
+const handleExceed = (files) => {
+  upload.value.clearFiles()
+  upload.value.handleStart(files[0])
+}
+//文件
+const file = ref()
+//获取文件
+const handleChange = (rawFile) => {
+  file.value = rawFile.raw
+}
 /**
  * 平台复选
  */
 //建议常用前5(3年)
 const optionsPlat = ref([
   {
-    label: 'b站',
-    value: 'PT000001'
+    value: 'PT000003',
+    label: '抖音'
   },
   {
-    label: '抖音',
-    value: 'PT000003'
+    value: 'PT000004',
+    label: '小红书'
   },
   {
-    label: '小红书',
-    value: 'PT000004'
-  },
+    value: 'PT000005',
+    label: 'b站'
+  }
 ])
+
 //添加按钮
 const flag = ref(true)
 
@@ -138,36 +135,76 @@ const optionsPlat2 = ref([
     value: 'PT000006'
   },
 ])
+async function getPList() {
+  const { data } = await getAll()
+  let list = data
+  optionsPlat2.value = list
+}
 //新增平台绑定
 const addPlat = ref()
-function add() {
+async function add() {
   //判断多选绑定值是否在平台多选框数组中
-  let x = optionsPlat2.value.some(i => i.value === addPlat.value)
+  let x = optionsPlat.value.some(i => i.value === addPlat.value)
+  console.log(x);
   if (x) {
-    let lable = optionsPlat2.value.filter(i => i.value === addPlat.value)
+    formData.platform.push(addPlat.value)
+  } else {
+    const { data } = await getPlatform(addPlat.value)
     optionsPlat.value.push({
-      label: lable[0].label,
-      value: lable[0].value
-    },)
-  }
-  else {
-    //创建新平台
-    if (addPlat.value) {
-      optionsPlat.value.push({
-        label: addPlat.value,
-      },)
-    }
+      label: data.name,
+      value: data.id
+    })
+    formData.platform.push(addPlat.value)
   }
   flag.value = true
   addPlat.value = ''
-  // console.log(optionsPlat);
 }
 //控制父元素active状态
 const emit = defineEmits(['changeActive'])
 function next() {
-  console.log(formData);
+  save()
   emit('changeActive', 1)
 }
+
+async function save() {
+  let form = new window.FormData()
+  form.append('file', file.value)
+  const { msg } = await uploadFile(form)
+
+  let market = {
+    name: formData.name,
+    info: msg,
+    cost: formData.budget,
+    start: getTime(formData.time[0]),
+    end: getTime(formData.time[1]),
+    status: "0",
+    pidList: formData.platform,
+    uidList: formData.users,
+    submit: getTime(new Date())
+  }
+  await marketStore.setInfo(market)
+  await marketStore.getAddMarket()
+
+  formData.name = ''
+  formData.content = ''
+  formData.time = []
+  formData.users = [userStore.userInfo.id]
+  formData.platform = []
+  formData.budget = 10000
+}
+
+onMounted(() => {
+  getUserList()
+  getPList()
+  if (marketStore.marketInfo.id != '' && marketStore.marketInfo.status == 4) {
+    formData.name = marketStore.marketInfo.name
+    formData.content = ''
+    formData.time = [marketStore.marketInfo.start, marketStore.marketInfo.end]
+    formData.users = marketStore.marketInfo.uidList
+    formData.platform = marketStore.marketInfo.pidList
+    formData.budget = marketStore.marketInfo.cost
+  }
+})
 </script>
 
 <style scoped lang="scss">

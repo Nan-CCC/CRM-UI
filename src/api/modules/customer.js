@@ -64,3 +64,34 @@ export function search(current, size, column, like, owner) {
     }
   })
 }
+
+export function getCustomerList(id) {
+  return request({
+    method: 'get',
+    url: '/customer/selectList',
+    params: {
+      uid: id
+    }
+  })
+}
+
+export function getNoOrder(id) {
+  return request({
+    method: 'get',
+    url: 'customer/noOrderList',
+    params: {
+      uid: id
+    }
+  })
+}
+
+export function getPieData(uid, pid) {
+  return request({
+    method: 'get',
+    url: 'customer/pie',
+    params: {
+      uid: uid,
+      pid: pid
+    }
+  })
+}
