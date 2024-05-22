@@ -29,6 +29,7 @@
           <template #default="props">
             <el-tag type="info" v-if="props.row.status == '1'">已反馈</el-tag>
             <el-tag v-if="props.row.status == '2'"> 已解决</el-tag>
+            <el-tag v-if="props.row.type == 1 && props.row.status != 0" type="warning">{{ props.row.status }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="sCreate" label="创建时间" />
@@ -87,6 +88,7 @@ async function getOrder() {
   const { data } = await selectAll(1, 10, "", "")
   total.value = data.total
   tableData.value = data.records
+  console.log(tableData.value);
 }
 
 const select = ref('oid')
@@ -110,5 +112,9 @@ onMounted(() => {
 
 .page {
   padding-bottom: 10px;
+}
+
+.foot {
+  padding-bottom: 15px;
 }
 </style>

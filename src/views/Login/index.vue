@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useUserStore } from '@/store/user'
 import router from "@/router";
 
@@ -53,7 +53,9 @@ const userStore = useUserStore()
 function toIndex() {
   userStore.getUserInfo(loginForm.value)
 }
-
+onMounted(() => {
+  changeSrc()
+})
 </script>
 
 <style scoped lang="scss">

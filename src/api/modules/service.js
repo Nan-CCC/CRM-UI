@@ -60,3 +60,13 @@ export function getHistoryService(cid, type) {
     }
   })
 }
+
+export function NumByService(type) {
+  return request({
+    method: 'get',
+    url: 'service/numByUser',
+    params: {
+      type: type
+    }
+  })
+}

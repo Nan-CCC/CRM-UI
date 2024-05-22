@@ -115,3 +115,24 @@ export function getHistory(cid, oid) {
     }
   })
 }
+
+export function getOrderAll(c, size) {
+  return request({
+    method: 'post',
+    url: 'order/queryall',
+    params: {
+      c,
+      size
+    }
+  })
+}
+
+export function getProListById(oid) {
+  return request({
+    method: 'post',
+    url: 'order/getProList',
+    params: {
+      oid
+    }
+  })
+}

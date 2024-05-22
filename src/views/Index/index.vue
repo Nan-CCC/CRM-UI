@@ -3,7 +3,9 @@
     <!-- 当前员工信息 -->
     <div class="base bor info fs18">
       <p>欢迎回来，<span>{{ userInfo.name }}</span></p>
-      <p>您目前所属：<span>{{ userInfo.department }}</span></p>
+      <p v-if="userStore.userInfo.authority == 0">您当前所属：<span>{{
+        userInfo.department }}</span></p>
+      <p v-else>您当前所属：<span>管理员</span></p>
       <p>{{ state.date.toLocaleString() }}</p>
     </div>
     <!-- 日历 -->
@@ -245,7 +247,6 @@ async function getLog() {
   for (let i in data) {
     logTable.value[i] = data[i]
   }
-  console.log(logTable.value);
 }
 onMounted(() => {
   setInterval(updateTime, 1000);

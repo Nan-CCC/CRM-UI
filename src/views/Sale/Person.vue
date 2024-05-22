@@ -5,34 +5,9 @@
         <div class="bor mr10 " style="height: 140px;color: #5e902f;">
           <div style="border-bottom: 1px solid #ddd;padding: 10px;font-size: 20px;color: #5e902f;">目标</div>
           <div style="font-size: 18px;text-align: center;padding-top: 15px;">
-            <span>本月期望数额：166667</span>
-            <div style="height: 20px;float: right;position: relative;right: 120px;top: 2px;">
-              <el-popover placement="top-start" trigger="hover" :width="160" :content=pop>
-                <template #reference>
-                  <el-icon size="20" v-if="flag">
-                    <CircleCheck />
-                  </el-icon>
-                  <el-icon v-else size="20" color="rgb(255, 132, 0)">
-                    <Warning />
-                  </el-icon>
-                </template>
-              </el-popover>
-
-            </div>
+            <span>本月期望数额：{{ UserStore.userInfo.target }}</span>
             <div style="font-size: 18px;text-align: center;padding-top: 15px;">
-              <span>本季期望数额：500000</span>
-              <div style="height: 20px;float: right;position: relative;right: 120px;top: 2px;">
-                <el-popover placement="top-start" trigger="hover" :width="160" :content=pop2>
-                  <template #reference>
-                    <el-icon size="20" v-if="flag2">
-                      <CircleCheck />
-                    </el-icon>
-                    <el-icon v-else size="20" color="rgb(255, 132, 0)">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
-              </div>
+              <span>本月已完成：{{ sumPrice }}</span>
             </div>
           </div>
         </div>
@@ -98,7 +73,7 @@ import * as echarts from 'echarts';
 import { getProList, getDataByLine } from '@/api/modules/order'
 import { getOrderSumPrice, getOrderSumNum } from '@/utils/common'
 import { useUserStore } from '@/store/user';
-import { setChart } from '@/utils/chart'
+
 
 const UserStore = useUserStore()
 
@@ -126,27 +101,7 @@ async function getData() {
   sumNum.value = getOrderSumNum(data)
   avg.value = sumPrice.value / sumNum.value
 }
-//本月目标弹窗
-//本季目标弹窗
-const flag = ref(!true)
-const pop = computed(() => {
-  if (flag.value) {
-    return '本月目标已完成'
-  }
-  else {
-    return '本月目标还差19888'
-  }
-})
-//本季目标弹窗
-const flag2 = ref(true)
-const pop2 = computed(() => {
-  if (flag2.value) {
-    return '本季目标已完成'
-  }
-  else {
-    return '本季目标还差20000'
-  }
-})
+
 /**
  * 树
  */

@@ -32,3 +32,67 @@ export function getUser(id) {
     }
   })
 }
+
+export function deleteUser(id) {
+  return request({
+    method: 'delete',
+    url: 'user/delete',
+    params: {
+      ids: id
+    }
+  })
+}
+export function updateUser(data) {
+  return request({
+    method: 'put',
+    url: 'user/update',
+    data: data
+  })
+}
+
+export function insertUser(data) {
+  return request({
+    method: 'post',
+    url: 'user/add',
+    data: data
+  })
+}
+
+export function selectPartUser(column, search) {
+  return request({
+    method: 'get',
+    url: 'user/queryby',
+    params: {
+      column: column,
+      select: search
+    }
+  })
+}
+
+export function insertInfo(data) {
+  return request({
+    method: 'post',
+    url: 'user/addInfo',
+    data: data
+  })
+}
+
+export function selectInfo(toid) {
+  return request({
+    method: 'get',
+    url: 'user/selectInfo',
+    params: {
+      toid
+    }
+  })
+}
+
+export function updateInfo(toid) {
+  return request({
+    method: 'put',
+    url: 'user/updateInfo',
+    params: {
+      toid
+    }
+  })
+}

@@ -24,3 +24,33 @@ export function getCustomerTop() {
     url: 'produce/top'
   })
 }
+
+export function getProPage(c, size) {
+  return request({
+    method: 'post',
+    url: 'produce/queryallpage',
+    params: {
+      size,
+      c
+    }
+  })
+}
+
+export function insertPro(data) {
+  return request({
+    method: 'post',
+    url: 'produce/add',
+    data: data
+  })
+}
+
+export function updateC(pid, critical) {
+  return request({
+    method: 'put',
+    url: 'produce/updateC',
+    params: {
+      pid,
+      critical
+    }
+  })
+}

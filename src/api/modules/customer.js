@@ -35,7 +35,7 @@ export function updateCustomer(data) {
   return request({
     method: 'put',
     url: '/customer/update',
-    params: data,
+    data: data,
   })
 }
 
@@ -92,6 +92,48 @@ export function getPieData(uid, pid) {
     params: {
       uid: uid,
       pid: pid
+    }
+  })
+}
+
+export function setLastContact(id, date, way) {
+  return request({
+    method: 'put',
+    url: 'customer/putlast',
+    params: {
+      id,
+      date,
+      way
+    }
+  })
+}
+
+export function setMarket(cid, mid, pid) {
+  return request({
+    method: 'put',
+    url: 'customer/putMarket',
+    params: {
+      cid,
+      mid,
+      pid
+    }
+  })
+}
+
+//获取客户列表
+export function getCustomerAll() {
+  return request({
+    method: 'get',
+    url: 'customer/allList'
+  })
+}
+
+export function delectCustomer(id) {
+  return request({
+    method: 'delete',
+    url: 'customer/delete',
+    params: {
+      ids: id
     }
   })
 }

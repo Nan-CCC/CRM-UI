@@ -24,19 +24,28 @@
         <template #default="props">
           <el-tag v-if="props.row.status == '0'">草稿</el-tag>
           <el-tag v-if="props.row.status == '1'" type="warning">待审核</el-tag>
-          <el-tag v-if="props.row.status == '2'" color="#ebf2f8" style="color:#1481bb">进行中</el-tag>
-          <el-tag v-if="props.row.status == '3'" type="info">已结束</el-tag>
-          <el-tag v-if="props.row.status == '4'" type="danger">未通过</el-tag>
+          <el-tag v-if="props.row.status == '2'" type="info">未开始</el-tag>
+          <el-tag v-if="props.row.status == '3'" color="#ebf2f8" style="color:#1481bb">进行中</el-tag>
+          <el-tag v-if="props.row.status == '4'" type="info">已结束</el-tag>
+          <el-tag v-if="props.row.status == '5'" type="danger">未通过</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="address" label="操作">
+
         <template #default="props">
-          <el-button size="small" type="primary" plain @click="toDetail(props.row.id, props.row.status)">
+          <el-button v-if="props.row.status == '0'" type="primary" size="small" plain @click="changeById(props.row.id)">
+            提交
+          </el-button>
+          <el-button v-if="props.row.status == '0' || props.row.status == '5'" size="small" type="danger" plain
+            @click="delectM(props.row.id)">
+            删除
+          </el-button>
+
+          <div v-else-if="props.row.status == '4'"></div>
+          <el-button v-else size="small" type="primary" plain @click="toDetail(props.row.id, props.row.status)">
             查看进度
           </el-button>
-          <!-- <el-button size="small" v-if="props.row.status === '3'">
-            数据分析
-          </el-button> -->
+
         </template>
       </el-table-column>
     </el-table>
@@ -48,7 +57,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import { selectAll, selectById } from '@/api/modules/market'
+import { selectAll, selectById, deleteMarket, updateStatus } from '@/api/modules/market'
 import { useRouter } from 'vue-router';
 import { useNowMarketStore } from '@/store/marketing';
 const nowMarket = useNowMarketStore()
@@ -119,20 +128,34 @@ async function toDetail(id, status) {
   nowMarket.setInfo(data)
   console.log(nowMarket.marketInfo);
   if (status == 0) {
-    sessionStorage.setItem('active', 1)
-  }
-  else if (status == 1) {
-    sessionStorage.setItem('active', 2)
-  }
-  else if (status == 2) {
-    sessionStorage.setItem('active', 3)
-  }
-  else if (status == 3) {
-    sessionStorage.setItem('active', 4)
-  }
-  else if (status == 4) {
     sessionStorage.setItem('active', 0)
   }
+  else if (status == 1) {
+    sessionStorage.setItem('active', 1)
+  }
+  else if (status == 2) {
+    sessionStorage.setItem('active', 2)
+  }
+  else if (status == 3) {
+    sessionStorage.setItem('active', 3)
+  }
+  else if (status == 4) {
+    sessionStorage.setItem('active', 4)
+  }
+  else if (status == 5) {
+    sessionStorage.setItem('active', 0)
+  }
+}
+
+async function delectM(val) {
+  await deleteMarket(val)
+  getOrder()
+
+}
+
+async function changeById(val) {
+  await updateStatus(val, '1')
+  getOrder()
 }
 onMounted(() => {
   getOrder()

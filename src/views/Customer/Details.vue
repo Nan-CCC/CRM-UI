@@ -123,4 +123,4 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped></style>@/api/modules/customer
+<style scoped></style>

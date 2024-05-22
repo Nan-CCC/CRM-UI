@@ -13,11 +13,13 @@
     "echarts": "^5.5.0",
     "element-plus": "^2.6.0",
     "elui-china-area-dht": "^2.0.0",
+    "file-saver": "^2.0.5",
     "js-cookie": "^3.0.5",
     "pinia": "^2.1.7",
     "pinia-plugin-persist": "^1.0.0",
     "vue": "^3.2.13",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.3.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~5.0.0",

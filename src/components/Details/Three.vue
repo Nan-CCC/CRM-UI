@@ -17,8 +17,7 @@
       <el-table-column prop="sCreate" label="发起时间" width="270" />
       <el-table-column label="状态" width="180">
         <template #default="prpos">
-          <el-tag v-if="prpos.row.status == 1" type="error">已反馈</el-tag>
-          <el-tag v-else>已解决</el-tag>
+          <el-tag type="error">{{ prpos.row.status }}</el-tag>
         </template>
       </el-table-column>
     </el-table>

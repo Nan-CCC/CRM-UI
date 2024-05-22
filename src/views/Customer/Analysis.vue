@@ -273,17 +273,25 @@ const lineRef = ref(null)
 async function initLine() {
   let linechart = echarts.init(lineRef.value)
   let option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+
+      },
+    },
     xAxis: {
       data: ['第一季度', '第二季度', '第三季度', '第四季度']
     },
     yAxis: {},
     series: [
       {
+        name: '客户增长数',
         data: [10, 8, 0, 0],
         type: 'line',
         areaStyle: {}
       },
       {
+        name: '订单增长数',
         data: [14, 11, 0, 0, 0],
         type: 'line',
         areaStyle: {

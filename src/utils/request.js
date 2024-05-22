@@ -7,7 +7,8 @@ import { useRouter, useRoute } from "vue-router";
 const service = axios.create({
   //vue.config.js
   baseURL: '/api',
-  timeout: 5000
+  timeout: 5000,
+  withCredentials: true
 });
 
 //请求拦截器
@@ -45,7 +46,7 @@ service.interceptors.response.use(
     else if (response.data.code == '200') {
       return response.data
     }
-
+    return response
   },
   error => {
     console.log('-----错误响应拦截器------')

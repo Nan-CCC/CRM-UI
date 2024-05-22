@@ -1,3 +1,4 @@
+import * as XLSX from 'xlsx';
 //工具
 
 //日期增加天数
@@ -43,4 +44,15 @@ export function getTime(now) {
 
   var currentTime = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
   return currentTime
+}
+
+//导出excel
+export function exportExcel(title, data) {
+  const workbook = XLSX.utils.book_new();
+  const worksheet = XLSX.utils.aoa_to_sheet(data);
+
+  // 将工作表添加到工作簿
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+  // 生成Excel文件
+  XLSX.writeFile(workbook, title + '.xlsx');
 }

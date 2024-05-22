@@ -47,7 +47,7 @@
       </el-form-item>
     </el-form>
     <div class="tool">
-      <el-button size="small">导出Excel</el-button>
+      <el-button size="small" @click="getExcel">导出Excel</el-button>
       <div class="fr">
         <el-select v-model="select" size="small" style="width: 90px">
           <el-option size="small" v-for=" item  in  option " :key="item.value" :label="item.label"
@@ -87,9 +87,9 @@ import { ElInput } from 'element-plus'
 import { getSuccess } from '@/utils/tips'
 import { ref, reactive, onMounted } from 'vue'
 import { isPhone } from '@/utils/validator.js'
-import { getCustomer, addCustomer, updateCustomer, updateOwner, search } from '@/api/modules/customer'
+import { getCustomer, addCustomer, updateCustomer, updateOwner, search, getCustomerList } from '@/api/modules/customer'
 import { getUserInfoByToken } from '@/api/modules/user'
-
+import { exportExcel, getTime } from '@/utils/common'
 /**
  * 表单
  */
@@ -102,6 +102,7 @@ const searchForm = reactive({
   phone: '',
   email: '',
   info: '',
+  uid: 'public'
 })
 //表单名称
 const rulesRef = ref()
@@ -181,20 +182,19 @@ const add = (val) => {
 /**
  * 修改客户
  */
-const update = (val) => {
-  val.validate((valid) => {
+const update = async (val) => {
+  val.validate(async (valid) => {
     //valid==true校验通过
     if (valid) {
       let costomer = {}
       for (var i in searchForm) {
         costomer[i] = searchForm[i]
       }
-      updateCustomer(costomer).then((res) => {
-        if (res.code == 200) {
-          getSuccess('修改成功')
-          getList(currentPage.value, pageSize.value)
-        }
-      })
+      const res = await updateCustomer(costomer)
+      if (res.code == 200) {
+        getSuccess('修改成功')
+        getList(currentPage.value, pageSize.value)
+      }
       //清空对象
       for (var i in searchForm) {
         searchForm[i] = null
@@ -254,6 +254,17 @@ async function tosearch() {
     tableData.value = data.records
     total.value = data.total
   }
+}
+
+async function getExcel() {
+  let table = []
+  let title = ['编号', '姓名', '年龄', '手机号码', '电子邮箱', '所属公司', '备注']
+  table.push(title)
+  const { data } = await getCustomerList('public')
+  data.map((item) => {
+    table.push([item.id, item.name, item.age, item.phone, item.email, item.company, item.info])
+  })
+  exportExcel('public_' + new Date().getTime(), table)
 }
 /**
  * 表格

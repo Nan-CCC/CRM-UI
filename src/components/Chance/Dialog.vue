@@ -4,25 +4,10 @@
       <div>
         <el-form :model="customInfo" label-position="right" label-width="80px" style="max-width: 480px;">
           <el-form-item label="客户名称">
-            <el-input v-model="customInfo.name" />
-          </el-form-item>
-          <el-form-item label="年龄段">
-            <el-select v-model="customInfo.age">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.label" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="所属公司">
-            <el-input v-model="customInfo.company" />
-          </el-form-item>
-          <el-form-item label="联系电话">
-            <el-input v-model="customInfo.phone" />
-          </el-form-item>
-          <el-form-item label="邮箱地址">
-            <el-input v-model="customInfo.email" />
+            <el-input v-model="customInfo.name" disabled />
           </el-form-item>
           <el-form-item label="活动来源">
-            <el-select v-model="customInfo.active" filterable allow-create default-first-option
-              :reserve-keyword="false">
+            <el-select v-model="customInfo.mid" filterable allow-create default-first-option :reserve-keyword="false">
               <el-option v-for="item in activeList" :label="item.name" :value="item.id" />
             </el-select>
           </el-form-item>
@@ -36,7 +21,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="dialogVisible = false">
+          <el-button type="primary" @click="save()">
             保存
           </el-button>
         </div>
@@ -46,19 +31,17 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, defineProps } from 'vue';
 import { getAll } from '@/api/modules/platform'
-import { getInfoById } from '@/api/modules/customer'
+import { getInfoById, setMarket } from '@/api/modules/customer'
+import { selectAllList } from '@/api/modules/market'
 const dialogVisible = ref(false)
 //表单数据
 const customInfo = reactive(
   {
+    id: '',
     name: '',
-    age: '',
-    company: '',
-    phone: '',
-    email: '',
-    active: '',
+    mid: '',
     pid: ''
   }
 )
@@ -68,7 +51,6 @@ async function handleOpen(visable, id) {
   dialogVisible.value = visable
   cusId.value = id
   const { data } = await getInfoById(id)
-  console.log(data);
   for (let i in customInfo) {
     customInfo[i] = data[i]
   }
@@ -102,7 +84,10 @@ const options = [
 ]
 //活动来源
 const activeList = ref([])
-
+async function getMarketList() {
+  const { data } = await selectAllList()
+  activeList.value = data
+}
 //平台来源选择
 const platformList = ref([])
 async function getPlatformList() {
@@ -110,8 +95,13 @@ async function getPlatformList() {
   platformList.value = data
 }
 //保存
-function save() {
-  console.log(customInfo);
+const props = defineProps({
+  reMount: Function
+})
+async function save() {
+  const { code } = await setMarket(customInfo.id, customInfo.mid, customInfo.pid)
+  dialogVisible.value = false
+  props.reMount()
 }
 
 defineExpose({
@@ -119,6 +109,7 @@ defineExpose({
 });
 onMounted(() => {
   getPlatformList()
+  getMarketList()
 })
 </script>
 

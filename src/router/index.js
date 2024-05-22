@@ -3,6 +3,7 @@ import { initRouter, createNow } from '@/router/router';
 import { isToken } from "@/api/modules/user";
 import { routes } from './static'
 import { getError } from '@/utils/tips'
+import { useMenuStore } from "@/store/menu"
 /**
  * 本系统跳转逻辑：
  *  根目录是layout框架
@@ -26,20 +27,26 @@ if (menu) {
   routers.forEach(item => {
     router.addRoute('Home', item)
   })
-  router.addRoute('Data', {
-    path: 'details/:id',
-    name: 'Details',
-    component: () => import('../views/customer/Details.vue'),
-    meta: {
-      title: '客户详情'
-    }
-  })
 }
+//使用pinia存储但不等直接取出，这里会报错，路由守卫中可以取出但刷新会消失
+// const menuStore = useMenuStore()
+// const menu = menuStore.menuInfo
+// const routers = initRouter(menu)
+// routers.forEach(item => {
+//   router.addRoute('Home', item)
+// })
 
 //守卫
 router.beforeEach(async (to, from) => {
+  const menuStore = useMenuStore()
+  const menu = menuStore.menuInfo
+  const routers = initRouter(menu)
+  routers.forEach(item => {
+    router.addRoute('Home', item)
+  })
   let nowPath = to.fullPath
   let oldPath = from.fullPath
+
   if (nowPath != "/login") {
     var token = sessionStorage.getItem("token")
     if (!token) {
@@ -85,11 +92,12 @@ router.beforeEach(async (to, from) => {
   }
 
   //从新增活动-->其他 删除session
-  if (oldPath == '/market/addActive') {
+  if (oldPath == '/market/addActive' && !nowPath.includes("market/addActive")) {
     if (sessionStorage.getItem('active')) {
       sessionStorage.removeItem('active')
     }
   }
+
 })
 
 export default router

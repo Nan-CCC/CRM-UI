@@ -48,7 +48,7 @@
         </el-form-item>
       </el-form>
       <div class="tool">
-        <el-button size="small">导出Excel</el-button>
+        <el-button size="small" @click="getExcel">导出Excel</el-button>
         <div class="fr">
           <el-select v-model="select" size="small" style="width: 90px">
             <el-option size="small" v-for=" item  in  option " :key="item.value" :label="item.label"
@@ -97,8 +97,11 @@ import { getSuccess } from '@/utils/tips'
 import { ref, reactive, onMounted } from 'vue'
 import { isPhone } from '@/utils/validator.js'
 import { useRouter, useRoute } from "vue-router"
-import { getCustomer, addCustomer, updateCustomer, updateOwner, search } from '@/api/modules/customer'
+import { getCustomer, addCustomer, updateCustomer, updateOwner, search, getCustomerList } from '@/api/modules/customer'
 import { useUserStore } from '@/store/user'
+import { exportExcel } from '@/utils/common'
+
+const userStore = useUserStore()
 /**
  * 表单
  */
@@ -111,7 +114,7 @@ const searchForm = reactive({
   phone: '',
   email: '',
   info: '',
-  uid: ''
+  uid: userStore.userInfo.id,
 })
 //表单名称
 const rulesRef = ref()
@@ -173,6 +176,7 @@ const add = (val) => {
       for (var i in searchForm) {
         costomer[i] = searchForm[i]
       }
+      console.log(costomer);
       addCustomer(costomer).then((res) => {
         if (res.code == 200) {
           getSuccess('添加成功')
@@ -267,6 +271,18 @@ async function tosearch() {
     total.value = data.total
   }
 }
+
+//导出xml
+async function getExcel() {
+  let table = []
+  let title = ['编号', '姓名', '年龄', '手机号码', '电子邮箱', '所属公司', '备注']
+  table.push(title)
+  const { data } = await getCustomerList(userStore.userInfo.id)
+  data.map((item) => {
+    table.push([item.id, item.name, item.age, item.phone, item.email, item.company, item.info])
+  })
+  exportExcel(userStore.userInfo.id + '_' + new Date().getTime(), table)
+}
 /**
  * 表格
  */
@@ -279,7 +295,7 @@ const pageSize = ref(10)
 //表格数据
 const tableData = ref([])
 
-const userStore = useUserStore()
+
 //分页
 async function getList(page, size) {
   const { data } = await getCustomer(page, size, userStore.userInfo.id)

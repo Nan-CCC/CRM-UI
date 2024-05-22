@@ -115,6 +115,7 @@ async function getOrders(val) {
       tableData.value[i].productList = data[i].productList
     }
   }
+  console.log(tableData.value);
 
 }
 //计算总价

@@ -13,7 +13,7 @@
     </div>
     <el-table :data="tableData" border table-layout="fixed">
       <el-table-column prop="cname" label="客户名称" />
-      <el-table-column prop="phone" label="联系电话" width="140" />
+
       <el-table-column label="订单地址" width="190">
         <template #default="props">
           <div v-if="props.row.address != 0">

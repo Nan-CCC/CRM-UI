@@ -8,9 +8,10 @@
         </span>
       </el-col>
       <el-col :span="1">
-        <el-icon size="20" class="icon" @click="change">
-          <div class="tip" v-if="flag2 == true"></div>
-          <BellFilled />
+        <el-icon size="20" class="icon" @click="open">
+          <el-badge :is-dot="flag" class="item">
+            <BellFilled />
+          </el-badge>
         </el-icon>
       </el-col>
       <el-col :span="1">
@@ -29,6 +30,22 @@
         </el-tooltip>
       </el-col>
     </el-row>
+
+    <el-dialog v-model="dialogVisible" destroy-on-close title="通知" width="500">
+      <div>
+        <div style="margin: 10px 0;">{{ info.content }}</div>
+        <div style="font-size: 12px;color: #aaa;text-align: right;">来自：{{ fromUser }}</div>
+        <div style="font-size: 12px;color: #aaa;text-align: right;">{{ info.createTime }}</div>
+      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="changeInfo">
+            已读
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 <script setup>
@@ -36,7 +53,7 @@ import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router"
 import { useUserStore } from '@/store/user'
 import { resetRouter } from '@/router/router'
-
+import { selectInfo, getUser, updateInfo } from "@/api/modules/user";
 let route = useRoute();
 const router = useRouter()
 const breadList = ref([])
@@ -47,10 +64,6 @@ function getMatched() {
     breadList.value.push(item.meta.title)
   })
 }
-//渲染后加载
-onMounted(() => {
-  getMatched();
-})
 
 //监听路由路径是否发生变化，之后更改面包屑
 watch(() => route.path, (newValue, oldValue) => {
@@ -58,12 +71,31 @@ watch(() => route.path, (newValue, oldValue) => {
   getMatched()
 })
 
-//通知的角标显示
-const flag2 = ref(false)
-function change() {
-  flag2.value = !flag2.value
+const flag = ref(false)
+const info = ref({})
+const fromUser = ref('')
+async function getInfo() {
+  const res = await selectInfo(userStore.userInfo.id)
+  if (res.data !== undefined) {
+    flag.value = true
+    info.value = res.data
+    const { data } = await getUser(res.data.uid)
+    fromUser.value = data.name
+  }
+}
+const dialogVisible = ref(false)
+
+async function open() {
+
+  dialogVisible.value = true
+
 }
 
+async function changeInfo() {
+  await updateInfo(userStore.userInfo.id)
+  dialogVisible.value = false
+  flag.value = false
+}
 //头像弹出框（退出登录）
 const visible = ref(false)
 const userStore = useUserStore()
@@ -75,6 +107,12 @@ function exit() {
   resetRouter(router)
   router.push('/login');
 }
+
+//渲染后加载
+onMounted(() => {
+  getMatched();
+  getInfo()
+})
 </script>
 
 <style scoped lang="scss">
@@ -84,6 +122,7 @@ function exit() {
   .icon {
     color: $header-color;
     margin-top: 10px;
+    cursor: pointer;
   }
 }
 

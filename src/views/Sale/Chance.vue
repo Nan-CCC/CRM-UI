@@ -2,10 +2,9 @@
   <div>
     <el-row class="m15">
       <el-col :span="18">
-        <div class="bor mr10" style="height: 565px;">
+        <div class="bor mr10">
           <div class="tool">
-            <el-button size="small" type="primary" @click="open">新建客户</el-button>
-            <el-button size="small">导出Excel</el-button>
+            <el-button size="small" @click="getExcel">导出Excel</el-button>
             <div class="fr">
               <el-select v-model="select" size="small" style="width: 90px">
                 <el-option size="small" v-for=" item  in  option " :key="item.value" :label="item.label"
@@ -17,9 +16,11 @@
           </div>
           <el-table :data="tableData" border style="width: 100%" table-layout="fixed">
             <el-table-column prop="name" label="客户名称" width="90" fixed />
-            <el-table-column label="年龄段" width="80">
+            <el-table-column label="年龄段" width="120">
               <template #default="props">
-                <el-tag> {{ props.row.age }}</el-tag>
+                <el-tag>
+                  {{ age.map(item => item.label)[age.map(item => item.value).indexOf(props.row.age)] }}
+                </el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="company" label="所属公司" width="200" />
@@ -28,13 +29,17 @@
             <el-table-column label="活动来源" width="200">
               <template #default="props">
                 <div v-if="props.row.mid == '' || props.row.mid == null"></div>
-                <el-tag v-else type="warning">{{ props.row.mid }}</el-tag>
+                <el-tag v-else type="warning">
+                  {{ market.map(item => item.name)[market.map(item => item.id).indexOf(props.row.mid)] }}
+                </el-tag>
               </template>
             </el-table-column>
             <el-table-column label="平台来源" width="200">
               <template #default="props">
                 <div v-if="props.row.pid == '' || props.row.pid == null"></div>
-                <el-tag v-else type="warning">{{ props.row.pid }}</el-tag>
+                <el-tag v-else type="warning">
+                  {{ platform.map(item => item.name)[platform.map(item => item.id).indexOf(props.row.pid)] }}
+                </el-tag>
               </template>
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="205">
@@ -42,16 +47,16 @@
                 <el-button size="small" type="warning" @click="update(props.row)">
                   编辑
                 </el-button>
-                <el-button size="small" type="danger" @click="deleteById(props.row.id, props.$index)">
+                <el-button size="small" type="danger" @click="deleteById(props.row.id)">
                   删除
                 </el-button>
-                <el-button size="small" type="primary">
+                <el-button size="small" type="primary" @click="changeById(props.row.id)">
                   转客户
                 </el-button>
               </template>
             </el-table-column>
           </el-table>
-          <el-pagination class="mt15 flex-center" :pager-count="11" layout="prev, pager, next,total,sizes"
+          <el-pagination class="mt15 flex-center page" :pager-count="11" layout="prev, pager, next,total,sizes"
             v-model:current-page="currentPage" v-model:page-size="pageSize" :total="total"
             :page-sizes="[10, 20, 30, 40, 50]" @size-change="getListSize" @current-change="getListCurrent" />
         </div>
@@ -60,7 +65,6 @@
         <div class="bor mb10 top">
           <div class="toptitle">
             本月热销产品</div>
-
           <div v-for="(item, index) in top" class="con">
             <el-row>
               <el-col :span="5">
@@ -76,22 +80,23 @@
                 <span class="child4">元</span>
               </el-col>
             </el-row>
-
-
-
           </div>
         </div>
       </el-col>
     </el-row>
-    <Dialog ref="dialogRef"></Dialog>
+    <Dialog ref="dialogRef" :reMount="reMount"></Dialog>
   </div>
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import Dialog from '@/components/Chance/Dialog.vue';
-import { getCustomer } from '@/api/modules/customer';
-import { getPlatform } from '@/api/modules/platform';
+import { getCustomer, getCustomerList, delectCustomer, updateOwner } from '@/api/modules/customer';
+import { getAll } from '@/api/modules/platform';
+import { selectAllList } from '@/api/modules/market'
+import { exportExcel } from '@/utils/common'
+import { useUserStore } from '@/store/user';
+const userStore = useUserStore()
 const top = [
   {
     "id": "CP000001",
@@ -186,6 +191,42 @@ const top = [
 
 ]
 const tableData = ref([])
+const age = [
+  {
+    value: '20-',
+    label: '20岁以下'
+  },
+  {
+    value: '20-30',
+    label: '20岁-30岁'
+  },
+  {
+    value: '30-40',
+    label: '30岁-40岁'
+  },
+  {
+    value: '40-50',
+    label: '40岁-50岁'
+  },
+  {
+    value: '50-60',
+    label: '50岁-60岁'
+  },
+  {
+    value: '60+',
+    label: '60岁以上'
+  },
+]
+const market = ref([])
+async function getMarket() {
+  const { data } = await selectAllList()
+  market.value = data
+}
+const platform = ref([])
+async function getPlatformList() {
+  const { data } = await getAll()
+  platform.value = data
+}
 //分页总数
 const total = ref()
 //初始页
@@ -209,23 +250,42 @@ async function getListCurrent(val) {
   getList(val, pageSize.value)
 }
 
+async function getExcel() {
+  let table = []
+  let title = ['编号', '姓名', '年龄', '手机号码', '电子邮箱', '所属公司', '备注']
+  table.push(title)
+  const { data } = await getCustomerList('0')
+  data.map((item) => {
+    table.push([item.id, item.name, item.age, item.phone, item.email, item.company, item.info])
+  })
+  exportExcel('chance' + new Date().getTime(), table)
+}
 
 //弹窗组件
 const dialogRef = ref(null)
-//新建客户
-function open() {
-  dialogRef.value.handleOpen(true)
-}
+
 //编辑客户
 function update(val) {
   dialogRef.value.handleOpen(true, val.id)
 }
 //删除客户
-function deleteById(val, index) {
-  tableData.splice(index, 1);
+async function deleteById(val) {
+  await delectCustomer(val)
+  reMount()
+}
+
+async function changeById(val) {
+  await updateOwner(val, userStore.userInfo.id)
+  reMount()
+}
+//刷新表数据
+function reMount() {
+  getList(currentPage.value, pageSize.value)
 }
 onMounted(() => {
   getList(currentPage.value, pageSize.value)
+  getMarket()
+  getPlatformList()
 })
 </script>
 
@@ -278,6 +338,6 @@ onMounted(() => {
 }
 
 .page {
-  padding-bottom: 10px;
+  padding-bottom: 15px;
 }
 </style>

@@ -67,6 +67,7 @@ import { useUserStore } from '@/store/user';
 import { insert, uploadFile } from '@/api/modules/market'
 import { useNowMarketStore } from "@/store/marketing"
 import { getTime } from '@/utils/common'
+
 const userStore = useUserStore()
 const marketStore = useNowMarketStore()
 const formData = reactive({
@@ -77,6 +78,8 @@ const formData = reactive({
   platform: [],
   budget: '10000'
 })
+
+
 //员工多选
 const options = ref([])
 async function getUserList() {
@@ -161,8 +164,31 @@ async function add() {
 }
 //控制父元素active状态
 const emit = defineEmits(['changeActive'])
-function next() {
-  save()
+async function next() {
+  let form = new window.FormData()
+  form.append('file', file.value)
+  const { msg } = await uploadFile(form)
+
+  let market = {
+    name: formData.name,
+    info: msg,
+    cost: formData.budget,
+    start: getTime(formData.time[0]),
+    end: getTime(formData.time[1]),
+    status: "1",
+    pidList: formData.platform,
+    uidList: formData.users,
+    submit: getTime(new Date())
+  }
+  await marketStore.setInfo(market)
+  await marketStore.getAddMarket()
+
+  formData.name = ''
+  formData.content = ''
+  formData.time = []
+  formData.users = [userStore.userInfo.id]
+  formData.platform = []
+  formData.budget = 10000
   emit('changeActive', 1)
 }
 
@@ -191,9 +217,11 @@ async function save() {
   formData.users = [userStore.userInfo.id]
   formData.platform = []
   formData.budget = 10000
+  upload.value.clearFiles()
 }
 
 onMounted(() => {
+
   getUserList()
   getPList()
   if (marketStore.marketInfo.id != '' && marketStore.marketInfo.status == 4) {

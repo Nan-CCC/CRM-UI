@@ -4,7 +4,7 @@
       <el-button size="small">导出Excel</el-button>
       <div class="fr">
         <el-select v-model="select" size="small" style="width: 90px">
-          <el-option size="small" v-for=" item  in  option " :key="item.value" :label="item.label"
+          <el-option size="small" v-for=" item  in  option " :key="item.value" :label="item.lable"
             :value="item.value" />
         </el-select>
         <el-input size="small" v-model="search" style="width: 150px;"></el-input>
@@ -16,17 +16,17 @@
       <el-table-column prop="company" label="所属公司" />
       <el-table-column prop="phone" label="联系电话" />
       <el-table-column prop="email" label="邮箱地址" />
-      <!-- <el-table-column prop="time" label="最近联系时间" width="170px" /> -->
-      <!-- <el-table-column label="联系方式">
+      <el-table-column prop="lastTime" label="最近联系时间" width="170px" />
+      <el-table-column label="联系方式" width="100px">
         <template #default="props">
-          <el-tag v-if="props.row.way">
-            {{ props.row.way }}
+          <el-tag v-if="props.row.lastWay" class="tag" disabled plain>
+            {{ props.row.lastWay }}
           </el-tag>
         </template>
-</el-table-column> -->
+      </el-table-column>
       <el-table-column label="操作" width="200px">
         <template #default="props">
-          <el-button size="small" type="warning" plain @click="open(props.row.id, '编辑信息')">
+          <el-button size="small" type="warning" plain @click="open(props.row.id, '最近联系')">
             编辑
           </el-button>
           <el-button size="small" color="#6ea235" plain @click="open(props.row.id, '发送邮件')">
@@ -42,7 +42,7 @@
       v-model:current-page="currentPage" v-model:page-size="pageSize" :total="total" :page-sizes="[10, 20, 30, 40, 50]"
       @size-change="getListSize" @current-change="getListCurrent" />
 
-    <Dialog ref="dialogRef"></Dialog>
+    <Dialog ref="dialogRef" :reMount="reMount"></Dialog>
   </div>
 </template>
 
@@ -53,7 +53,6 @@ import { getCustomer } from '@/api/modules/customer'
 import { useUserStore } from '@/store/user'
 
 const tableData = ref([])
-const way = ['电话', '邮件', '上门', '邮件', '上门', '短信', '短信', '短信', '电话', '邮件', '上门',]
 /**
  * 表格
  */
@@ -84,6 +83,15 @@ const dialogRef = ref(null)
 function open(id, type) {
   dialogRef.value.handleOpen(true, id, type)
 }
+const select = ref('id')
+const option = [{
+  lable: '客户编号',
+  value: 'id'
+}]
+//子组件控制重新加载
+function reMount() {
+  getList(currentPage.value, pageSize.value)
+}
 onMounted(() => {
   getList(currentPage.value, pageSize.value)
 })
@@ -101,5 +109,11 @@ onMounted(() => {
 
 .foot {
   padding-bottom: 15px;
+}
+
+.tag {
+  border: 1px solid slateblue;
+  color: slateblue;
+  background-color: #ede9f2
 }
 </style>
